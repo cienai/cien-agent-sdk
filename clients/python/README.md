@@ -33,6 +33,8 @@ print(companies)
 
 ## Authentication
 
+> Need credentials or auth setup details? Contact Cien to get authentication information for your environment.
+
 ```python
 from cien_agent_sdk import CienClient
 

@@ -70,6 +70,8 @@ sync_rows = client.admin.sync.list(coid="my-company-id")
 
 ### Getting a Bearer Token
 
+> Need credentials or auth setup details? Contact Cien to get authentication information for your environment.
+
 Use one of these approaches:
 
 1. Service account username/password:
