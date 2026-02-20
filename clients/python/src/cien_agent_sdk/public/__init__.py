@@ -11,6 +11,7 @@ from .version import PublicVersionAPI
 
 class PublicClient:
     def __init__(self, transport: HTTPTransport) -> None:
+        """Initialize grouped public endpoint clients."""
         self.companies = PublicCompaniesAPI(transport)
         self.config = PublicConfigAPI(transport)
         self.powerbi = PublicPowerBIAPI(transport)

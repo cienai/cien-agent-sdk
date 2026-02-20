@@ -21,6 +21,7 @@ class HTTPTransport:
         default_headers: dict[str, str] | None = None,
         session: requests.Session | None = None,
     ) -> None:
+        """Create a transport with shared base URL, auth token, and session settings."""
         self.base_url = base_url.rstrip("/")
         self.timeout = timeout
         self.session = session or requests.Session()
@@ -30,6 +31,7 @@ class HTTPTransport:
             self.set_token(token)
 
     def set_token(self, token: str | None) -> None:
+        """Set or clear the bearer token used for subsequent requests."""
         self._token = token
 
     def request(
@@ -41,6 +43,12 @@ class HTTPTransport:
         json: Any | None = None,
         headers: dict[str, str] | None = None,
     ) -> Any:
+        """Execute one HTTP request and normalize successful/error responses.
+
+        Raises:
+            RequestError: Network, DNS, timeout, or other request-layer failures.
+            APIError: Any HTTP response with status code >= 400.
+        """
         url = f"{self.base_url}/{path.lstrip('/')}"
         merged_headers = dict(self.default_headers)
         if self._token:

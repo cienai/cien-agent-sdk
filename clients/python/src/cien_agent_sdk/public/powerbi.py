@@ -9,18 +9,23 @@ class PublicPowerBIAPI(EndpointGroup):
     """/api/powerbi endpoints."""
 
     def list_workspaces(self) -> list[dict[str, Any]]:
+        """List Power BI workspaces visible to the caller."""
         return self._get("/api/powerbi/workspaces")
 
     def get_workspace(self, workspace_id: str) -> dict[str, Any]:
+        """Get metadata for one Power BI workspace."""
         return self._get(f"/api/powerbi/workspaces/{workspace_id}")
 
     def list_reports(self, workspace_id: str) -> list[dict[str, Any]]:
+        """List reports in a Power BI workspace."""
         return self._get(f"/api/powerbi/workspaces/{workspace_id}/reports")
 
     def list_report_pages(self, workspace_id: str, report_id: str) -> list[dict[str, Any]]:
+        """List pages for one report in a workspace."""
         return self._get(f"/api/powerbi/workspaces/{workspace_id}/reports/{report_id}/pages")
 
     def list_datasets(self, workspace_id: str) -> list[dict[str, Any]]:
+        """List datasets available in a workspace."""
         return self._get(f"/api/powerbi/workspaces/{workspace_id}/datasets")
 
     def generate_embed_token(
@@ -33,6 +38,7 @@ class PublicPowerBIAPI(EndpointGroup):
         lifetime_minutes: int | None = None,
         allow_save_as: bool = False,
     ) -> dict[str, Any]:
+        """Generate an embed token for a Power BI report."""
         return self._post(
             f"/api/powerbi/workspaces/{workspace_id}/reports/{report_id}/embed-token",
             json={

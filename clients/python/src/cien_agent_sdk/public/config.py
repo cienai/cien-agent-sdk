@@ -17,6 +17,7 @@ class PublicConfigAPI(EndpointGroup):
         level: str | None = None,
         convert_dtypes: bool = False,
     ) -> list[dict[str, Any]]:
+        """List configuration entries for a company with optional filtering."""
         return self._get(
             "/api/config",
             params=drop_none(
@@ -30,16 +31,19 @@ class PublicConfigAPI(EndpointGroup):
         )
 
     def get(self, *, coid: str, key: str, convert_dtypes: bool = False) -> dict[str, Any]:
+        """Get one configuration value for a company and key."""
         return self._get(
             f"/api/config/{coid}/{key}",
             params={"convert_dtypes": convert_dtypes},
         )
 
     def save(self, *, coid: str, key: str, config_type: str, value: Any = None) -> dict[str, Any]:
+        """Create or replace one configuration value."""
         return self._post(
             f"/api/config/{coid}",
             json={"key": key, "type": config_type, "value": value},
         )
 
     def delete(self, *, coid: str, key: str) -> None:
+        """Delete a configuration value for a company and key."""
         self._delete(f"/api/config/{coid}/{key}")

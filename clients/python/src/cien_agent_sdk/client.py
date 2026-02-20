@@ -26,6 +26,7 @@ class CienClient:
         default_headers: dict[str, str] | None = None,
         session: requests.Session | None = None,
     ) -> None:
+        """Initialize public/admin API groups sharing one transport configuration."""
         self.transport = HTTPTransport(
             base_url=base_url,
             token=token,
@@ -37,6 +38,7 @@ class CienClient:
         self.admin = AdminClient(self.transport)
 
     def set_token(self, token: str | None) -> None:
+        """Update the bearer token used by all API groups."""
         self.transport.set_token(token)
 
 

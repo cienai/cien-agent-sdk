@@ -11,6 +11,7 @@ from .sync_source_definitions import AdminSyncSourceDefinitionsAPI
 
 class AdminClient:
     def __init__(self, transport: HTTPTransport) -> None:
+        """Initialize grouped admin endpoint clients."""
         self.companies = AdminCompaniesAPI(transport)
         self.environments = AdminEnvironmentsAPI(transport)
         self.partners = AdminPartnersAPI(transport)
