@@ -18,6 +18,7 @@ class PublicCompaniesAPI(EndpointGroup):
         limit: int | None = None,
         natural_query: str | None = None,
     ) -> list[dict[str, Any]]:
+        """List companies using query-string filters."""
         return self._get(
             "/api/companies",
             params=drop_none(
@@ -40,6 +41,7 @@ class PublicCompaniesAPI(EndpointGroup):
         limit: int | None = None,
         natural_query: str | None = None,
     ) -> list[dict[str, Any]]:
+        """Search companies using a structured JSON payload."""
         payload = drop_none(
             {
                 "selected_columns": selected_columns,
@@ -52,6 +54,7 @@ class PublicCompaniesAPI(EndpointGroup):
         return self._post("/api/companies/search", json=payload)
 
     def get(self, coid: str, *, selected_columns: list[str] | None = None) -> dict[str, Any]:
+        """Fetch one company by COID."""
         return self._get(
             "/api/companies/companies",
             params=drop_none({"coid": coid, "selected_columns": selected_columns}),
@@ -64,6 +67,7 @@ class PublicCompaniesAPI(EndpointGroup):
         company_name: str | None = None,
         selected_columns: list[str] | None = None,
     ) -> dict[str, Any]:
+        """Look up one company by ID or name."""
         return self._get(
             "/api/companies/lookup",
             params=drop_none(
@@ -82,10 +86,12 @@ class PublicCompaniesAPI(EndpointGroup):
         updates: dict[str, Any],
         selected_columns: list[str] | None = None,
     ) -> dict[str, Any]:
+        """Apply partial field updates to one company."""
         return self._patch(
             f"/api/companies/{company_id}",
             json={"updates": updates, "selected_columns": selected_columns},
         )
 
     def delete(self, company_id: str) -> dict[str, Any]:
+        """Delete one company by internal company ID."""
         return self._delete(f"/api/companies/{company_id}")

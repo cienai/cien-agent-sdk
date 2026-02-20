@@ -61,6 +61,13 @@ admin_companies = client.admin.companies.list()
 sync_rows = client.admin.sync.list(coid="my-company-id")
 ```
 
+### Python Docs
+
+- `clients/python/README.md`
+- `clients/python/docs/USAGE.md`
+- `clients/python/docs/PUBLIC_API.md`
+- `clients/python/docs/ADMIN_API.md`
+
 ### Getting a Bearer Token
 
 Use one of these approaches:

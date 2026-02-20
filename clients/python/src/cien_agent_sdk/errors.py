@@ -13,6 +13,7 @@ class APIError(CienAgentSDKError):
     """Raised when the API responds with a non-2xx status code."""
 
     def __init__(self, status_code: int, message: str, response_body: Any = None) -> None:
+        """Capture HTTP status, message, and parsed response payload."""
         self.status_code = status_code
         self.message = message
         self.response_body = response_body

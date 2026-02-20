@@ -20,6 +20,7 @@ class AdminCompaniesAPI(EndpointGroup):
         limit: int | None = None,
         natural_query: str | None = None,
     ) -> list[dict[str, Any]]:
+        """List companies with admin-only filters for partner and org scope."""
         return self._get(
             "/api/admin/companies",
             params=drop_none(
@@ -46,6 +47,7 @@ class AdminCompaniesAPI(EndpointGroup):
         limit: int | None = None,
         natural_query: str | None = None,
     ) -> list[dict[str, Any]]:
+        """Search companies with admin-only filters using a JSON payload."""
         payload = drop_none(
             {
                 "partner_id": partner_id,
@@ -60,6 +62,7 @@ class AdminCompaniesAPI(EndpointGroup):
         return self._post("/api/admin/companies/search", json=payload)
 
     def get(self, coid: str, *, selected_columns: list[str] | None = None) -> dict[str, Any]:
+        """Fetch one company record by COID through admin APIs."""
         return self._get(
             "/api/admin/companies/companies",
             params=drop_none({"coid": coid, "selected_columns": selected_columns}),
@@ -72,6 +75,7 @@ class AdminCompaniesAPI(EndpointGroup):
         company_name: str | None = None,
         selected_columns: list[str] | None = None,
     ) -> dict[str, Any]:
+        """Look up one company by company ID or company name."""
         return self._get(
             "/api/admin/companies/lookup",
             params=drop_none(
@@ -90,10 +94,12 @@ class AdminCompaniesAPI(EndpointGroup):
         updates: dict[str, Any],
         selected_columns: list[str] | None = None,
     ) -> dict[str, Any]:
+        """Apply partial updates to one company via admin endpoint."""
         return self._patch(
             f"/api/admin/companies/{company_id}",
             json={"updates": updates, "selected_columns": selected_columns},
         )
 
     def delete(self, company_id: str) -> dict[str, Any]:
+        """Delete one company by internal company ID via admin endpoint."""
         return self._delete(f"/api/admin/companies/{company_id}")

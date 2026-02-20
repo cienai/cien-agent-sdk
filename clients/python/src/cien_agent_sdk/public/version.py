@@ -9,4 +9,5 @@ class PublicVersionAPI(EndpointGroup):
     """/version endpoint."""
 
     def get(self) -> dict[str, Any]:
+        """Return service version metadata."""
         return self._get("/version")
