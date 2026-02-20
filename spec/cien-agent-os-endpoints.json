@@ -1,0 +1,838 @@
+{
+  "generated_at_utc": "2026-02-20T10:18:21.512471+00:00",
+  "agent_os_path": "/home/ben/cien-agent/cien-agent-os",
+  "endpoint_count": 83,
+  "sdk_included_count": 60,
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/api/admin/companies",
+      "router_name": "router",
+      "router_prefix": "/api/admin/companies",
+      "source_file": "api/routes/admin/companies.py",
+      "source_line": 202,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/admin/companies/companies",
+      "router_name": "router",
+      "router_prefix": "/api/admin/companies",
+      "source_file": "api/routes/admin/companies.py",
+      "source_line": 254,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/admin/companies/companies/",
+      "router_name": "router",
+      "router_prefix": "/api/admin/companies",
+      "source_file": "api/routes/admin/companies.py",
+      "source_line": 255,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/admin/companies/lookup",
+      "router_name": "router",
+      "router_prefix": "/api/admin/companies",
+      "source_file": "api/routes/admin/companies.py",
+      "source_line": 276,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "POST",
+      "path": "/api/admin/companies/search",
+      "router_name": "router",
+      "router_prefix": "/api/admin/companies",
+      "source_file": "api/routes/admin/companies.py",
+      "source_line": 238,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/admin/environments",
+      "router_name": "router",
+      "router_prefix": "/api/admin/environments",
+      "source_file": "api/routes/admin/environments.py",
+      "source_line": 316,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "POST",
+      "path": "/api/admin/environments",
+      "router_name": "router",
+      "router_prefix": "/api/admin/environments",
+      "source_file": "api/routes/admin/environments.py",
+      "source_line": 368,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/admin/environments/{coid}",
+      "router_name": "router",
+      "router_prefix": "/api/admin/environments",
+      "source_file": "api/routes/admin/environments.py",
+      "source_line": 413,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/admin/environments/{coid}",
+      "router_name": "router",
+      "router_prefix": "/api/admin/environments",
+      "source_file": "api/routes/admin/environments.py",
+      "source_line": 349,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/admin/environments/{coid}",
+      "router_name": "router",
+      "router_prefix": "/api/admin/environments",
+      "source_file": "api/routes/admin/environments.py",
+      "source_line": 395,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "POST",
+      "path": "/api/admin/environments/{coid}/copy",
+      "router_name": "router",
+      "router_prefix": "/api/admin/environments",
+      "source_file": "api/routes/admin/environments.py",
+      "source_line": 430,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/admin/partners",
+      "router_name": "entity_router",
+      "router_prefix": "/api/admin/partners",
+      "source_file": "api/routes/admin/partners.py",
+      "source_line": 77,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "POST",
+      "path": "/api/admin/partners",
+      "router_name": "entity_router",
+      "router_prefix": "/api/admin/partners",
+      "source_file": "api/routes/admin/partners.py",
+      "source_line": 134,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/admin/partners/{partner_id}",
+      "router_name": "entity_router",
+      "router_prefix": "/api/admin/partners",
+      "source_file": "api/routes/admin/partners.py",
+      "source_line": 251,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/admin/partners/{partner_id}",
+      "router_name": "entity_router",
+      "router_prefix": "/api/admin/partners",
+      "source_file": "api/routes/admin/partners.py",
+      "source_line": 122,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/admin/partners/{partner_id}",
+      "router_name": "entity_router",
+      "router_prefix": "/api/admin/partners",
+      "source_file": "api/routes/admin/partners.py",
+      "source_line": 184,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/admin/powerbi/workspaces/{workspace_id}",
+      "router_name": "router",
+      "router_prefix": "/api/admin/powerbi",
+      "source_file": "api/routes/admin/powerbi.py",
+      "source_line": 115,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/admin/powerbi/workspaces/{workspace_id}/datasets",
+      "router_name": "router",
+      "router_prefix": "/api/admin/powerbi",
+      "source_file": "api/routes/admin/powerbi.py",
+      "source_line": 155,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/admin/powerbi/workspaces/{workspace_id}/reports",
+      "router_name": "router",
+      "router_prefix": "/api/admin/powerbi",
+      "source_file": "api/routes/admin/powerbi.py",
+      "source_line": 128,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "POST",
+      "path": "/api/admin/powerbi/workspaces/{workspace_id}/reports/{report_id}/embed-token",
+      "router_name": "router",
+      "router_prefix": "/api/admin/powerbi",
+      "source_file": "api/routes/admin/powerbi.py",
+      "source_line": 168,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/admin/powerbi/workspaces/{workspace_id}/reports/{report_id}/pages",
+      "router_name": "router",
+      "router_prefix": "/api/admin/powerbi",
+      "source_file": "api/routes/admin/powerbi.py",
+      "source_line": 141,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/admin/sync",
+      "router_name": "router",
+      "router_prefix": "/api/admin/sync",
+      "source_file": "api/routes/admin/sync.py",
+      "source_line": 132,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "POST",
+      "path": "/api/admin/sync",
+      "router_name": "router",
+      "router_prefix": "/api/admin/sync",
+      "source_file": "api/routes/admin/sync.py",
+      "source_line": 186,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/admin/sync-source-definitions",
+      "router_name": "router",
+      "router_prefix": "/api/admin/sync-source-definitions",
+      "source_file": "api/routes/admin/sync_source_definitions.py",
+      "source_line": 75,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "POST",
+      "path": "/api/admin/sync-source-definitions",
+      "router_name": "router",
+      "router_prefix": "/api/admin/sync-source-definitions",
+      "source_file": "api/routes/admin/sync_source_definitions.py",
+      "source_line": 130,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/admin/sync-source-definitions/source-type/{source_type}",
+      "router_name": "router",
+      "router_prefix": "/api/admin/sync-source-definitions",
+      "source_file": "api/routes/admin/sync_source_definitions.py",
+      "source_line": 119,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/admin/sync-source-definitions/{definition_id}",
+      "router_name": "router",
+      "router_prefix": "/api/admin/sync-source-definitions",
+      "source_file": "api/routes/admin/sync_source_definitions.py",
+      "source_line": 228,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/admin/sync-source-definitions/{definition_id}",
+      "router_name": "router",
+      "router_prefix": "/api/admin/sync-source-definitions",
+      "source_file": "api/routes/admin/sync_source_definitions.py",
+      "source_line": 108,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/admin/sync-source-definitions/{definition_id}",
+      "router_name": "router",
+      "router_prefix": "/api/admin/sync-source-definitions",
+      "source_file": "api/routes/admin/sync_source_definitions.py",
+      "source_line": 181,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/admin/sync/{sync_id}",
+      "router_name": "router",
+      "router_prefix": "/api/admin/sync",
+      "source_file": "api/routes/admin/sync.py",
+      "source_line": 270,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/admin/sync/{sync_id}",
+      "router_name": "router",
+      "router_prefix": "/api/admin/sync",
+      "source_file": "api/routes/admin/sync.py",
+      "source_line": 175,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/admin/sync/{sync_id}",
+      "router_name": "router",
+      "router_prefix": "/api/admin/sync",
+      "source_file": "api/routes/admin/sync.py",
+      "source_line": 233,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/agentic-definitions",
+      "router_name": "router",
+      "router_prefix": "/api/agentic-definitions",
+      "source_file": "api/routes/agentic_definitions.py",
+      "source_line": 509,
+      "included_in_sdk": false,
+      "reason": "Excluded pattern: /api/agentic-definitions"
+    },
+    {
+      "method": "GET",
+      "path": "/api/agentic-definitions",
+      "router_name": "router",
+      "router_prefix": "/api/agentic-definitions",
+      "source_file": "api/routes/agentic_definitions.py",
+      "source_line": 510,
+      "included_in_sdk": false,
+      "reason": "Excluded pattern: /api/agentic-definitions"
+    },
+    {
+      "method": "POST",
+      "path": "/api/agentic-definitions",
+      "router_name": "router",
+      "router_prefix": "/api/agentic-definitions",
+      "source_file": "api/routes/agentic_definitions.py",
+      "source_line": 532,
+      "included_in_sdk": false,
+      "reason": "Excluded pattern: /api/agentic-definitions"
+    },
+    {
+      "method": "POST",
+      "path": "/api/agentic-definitions",
+      "router_name": "router",
+      "router_prefix": "/api/agentic-definitions",
+      "source_file": "api/routes/agentic_definitions.py",
+      "source_line": 533,
+      "included_in_sdk": false,
+      "reason": "Excluded pattern: /api/agentic-definitions"
+    },
+    {
+      "method": "POST",
+      "path": "/api/agentic-definitions/seed",
+      "router_name": "router",
+      "router_prefix": "/api/agentic-definitions",
+      "source_file": "api/routes/agentic_definitions.py",
+      "source_line": 904,
+      "included_in_sdk": false,
+      "reason": "Excluded pattern: /api/agentic-definitions"
+    },
+    {
+      "method": "GET",
+      "path": "/api/agentic-definitions/tools",
+      "router_name": "router",
+      "router_prefix": "/api/agentic-definitions",
+      "source_file": "api/routes/agentic_definitions.py",
+      "source_line": 498,
+      "included_in_sdk": false,
+      "reason": "Excluded pattern: /api/agentic-definitions"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/agentic-definitions/{definition_id}",
+      "router_name": "router",
+      "router_prefix": "/api/agentic-definitions",
+      "source_file": "api/routes/agentic_definitions.py",
+      "source_line": 659,
+      "included_in_sdk": false,
+      "reason": "Excluded pattern: /api/agentic-definitions"
+    },
+    {
+      "method": "GET",
+      "path": "/api/agentic-definitions/{definition_id}",
+      "router_name": "router",
+      "router_prefix": "/api/agentic-definitions",
+      "source_file": "api/routes/agentic_definitions.py",
+      "source_line": 521,
+      "included_in_sdk": false,
+      "reason": "Excluded pattern: /api/agentic-definitions"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/agentic-definitions/{definition_id}",
+      "router_name": "router",
+      "router_prefix": "/api/agentic-definitions",
+      "source_file": "api/routes/agentic_definitions.py",
+      "source_line": 577,
+      "included_in_sdk": false,
+      "reason": "Excluded pattern: /api/agentic-definitions"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/agentic-definitions/{definition_id}/docs",
+      "router_name": "router",
+      "router_prefix": "/api/agentic-definitions",
+      "source_file": "api/routes/agentic_definitions.py",
+      "source_line": 793,
+      "included_in_sdk": false,
+      "reason": "Excluded pattern: /api/agentic-definitions"
+    },
+    {
+      "method": "POST",
+      "path": "/api/agentic-definitions/{definition_id}/docs",
+      "router_name": "router",
+      "router_prefix": "/api/agentic-definitions",
+      "source_file": "api/routes/agentic_definitions.py",
+      "source_line": 721,
+      "included_in_sdk": false,
+      "reason": "Excluded pattern: /api/agentic-definitions"
+    },
+    {
+      "method": "GET",
+      "path": "/api/agentic-definitions/{definition_id}/docs/{file_name}",
+      "router_name": "router",
+      "router_prefix": "/api/agentic-definitions",
+      "source_file": "api/routes/agentic_definitions.py",
+      "source_line": 868,
+      "included_in_sdk": false,
+      "reason": "Excluded pattern: /api/agentic-definitions"
+    },
+    {
+      "method": "POST",
+      "path": "/api/agentic-definitions/{definition_id}/docs/{file_name}/reindex",
+      "router_name": "router",
+      "router_prefix": "/api/agentic-definitions",
+      "source_file": "api/routes/agentic_definitions.py",
+      "source_line": 855,
+      "included_in_sdk": false,
+      "reason": "Excluded pattern: /api/agentic-definitions"
+    },
+    {
+      "method": "POST",
+      "path": "/api/agentic-definitions/{definition_id}/reload",
+      "router_name": "router",
+      "router_prefix": "/api/agentic-definitions",
+      "source_file": "api/routes/agentic_definitions.py",
+      "source_line": 636,
+      "included_in_sdk": false,
+      "reason": "Excluded pattern: /api/agentic-definitions"
+    },
+    {
+      "method": "GET",
+      "path": "/api/companies",
+      "router_name": "router",
+      "router_prefix": "/api/companies",
+      "source_file": "api/routes/public/companies.py",
+      "source_line": 197,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/companies/companies",
+      "router_name": "router",
+      "router_prefix": "/api/companies",
+      "source_file": "api/routes/public/companies.py",
+      "source_line": 232,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/companies/companies/",
+      "router_name": "router",
+      "router_prefix": "/api/companies",
+      "source_file": "api/routes/public/companies.py",
+      "source_line": 233,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/companies/lookup",
+      "router_name": "router",
+      "router_prefix": "/api/companies",
+      "source_file": "api/routes/public/companies.py",
+      "source_line": 254,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "POST",
+      "path": "/api/companies/search",
+      "router_name": "router",
+      "router_prefix": "/api/companies",
+      "source_file": "api/routes/public/companies.py",
+      "source_line": 219,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/config",
+      "router_name": "router",
+      "router_prefix": "/api/config",
+      "source_file": "api/routes/public/config.py",
+      "source_line": 43,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "POST",
+      "path": "/api/config/{coid}",
+      "router_name": "router",
+      "router_prefix": "/api/config",
+      "source_file": "api/routes/public/config.py",
+      "source_line": 78,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/config/{coid}/{key}",
+      "router_name": "router",
+      "router_prefix": "/api/config",
+      "source_file": "api/routes/public/config.py",
+      "source_line": 97,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/config/{coid}/{key}",
+      "router_name": "router",
+      "router_prefix": "/api/config",
+      "source_file": "api/routes/public/config.py",
+      "source_line": 63,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/powerbi/workspaces",
+      "router_name": "router",
+      "router_prefix": "/api/powerbi",
+      "source_file": "api/routes/public/powerbi.py",
+      "source_line": 117,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/powerbi/workspaces/{workspace_id}",
+      "router_name": "router",
+      "router_prefix": "/api/powerbi",
+      "source_file": "api/routes/public/powerbi.py",
+      "source_line": 126,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/powerbi/workspaces/{workspace_id}/datasets",
+      "router_name": "router",
+      "router_prefix": "/api/powerbi",
+      "source_file": "api/routes/public/powerbi.py",
+      "source_line": 169,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/powerbi/workspaces/{workspace_id}/reports",
+      "router_name": "router",
+      "router_prefix": "/api/powerbi",
+      "source_file": "api/routes/public/powerbi.py",
+      "source_line": 140,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "POST",
+      "path": "/api/powerbi/workspaces/{workspace_id}/reports/{report_id}/embed-token",
+      "router_name": "router",
+      "router_prefix": "/api/powerbi",
+      "source_file": "api/routes/public/powerbi.py",
+      "source_line": 183,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/powerbi/workspaces/{workspace_id}/reports/{report_id}/pages",
+      "router_name": "router",
+      "router_prefix": "/api/powerbi",
+      "source_file": "api/routes/public/powerbi.py",
+      "source_line": 154,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/user-company-permissions/company/{coid}/users",
+      "router_name": "router",
+      "router_prefix": "/api/user-company-permissions",
+      "source_file": "api/routes/public/user_company_permissions.py",
+      "source_line": 97,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "POST",
+      "path": "/api/user-company-permissions/remove",
+      "router_name": "router",
+      "router_prefix": "/api/user-company-permissions",
+      "source_file": "api/routes/public/user_company_permissions.py",
+      "source_line": 129,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "POST",
+      "path": "/api/user-company-permissions/set",
+      "router_name": "router",
+      "router_prefix": "/api/user-company-permissions",
+      "source_file": "api/routes/public/user_company_permissions.py",
+      "source_line": 115,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/user-company-permissions/user/{email}/companies",
+      "router_name": "router",
+      "router_prefix": "/api/user-company-permissions",
+      "source_file": "api/routes/public/user_company_permissions.py",
+      "source_line": 81,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/users",
+      "router_name": "router",
+      "router_prefix": "/api/users",
+      "source_file": "api/routes/public/users.py",
+      "source_line": 670,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "POST",
+      "path": "/api/users/company-permissions/remove",
+      "router_name": "router",
+      "router_prefix": "/api/users",
+      "source_file": "api/routes/public/users.py",
+      "source_line": 650,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "POST",
+      "path": "/api/users/company-permissions/set",
+      "router_name": "router",
+      "router_prefix": "/api/users",
+      "source_file": "api/routes/public/users.py",
+      "source_line": 633,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "POST",
+      "path": "/api/users/invite",
+      "router_name": "router",
+      "router_prefix": "/api/users",
+      "source_file": "api/routes/public/users.py",
+      "source_line": 625,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/users/lookup",
+      "router_name": "router",
+      "router_prefix": "/api/users",
+      "source_file": "api/routes/public/users.py",
+      "source_line": 745,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "POST",
+      "path": "/api/users/token",
+      "router_name": "router",
+      "router_prefix": "/api/users",
+      "source_file": "api/routes/public/users.py",
+      "source_line": 551,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "POST",
+      "path": "/api/users/upsert",
+      "router_name": "router",
+      "router_prefix": "/api/users",
+      "source_file": "api/routes/public/users.py",
+      "source_line": 585,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "GET",
+      "path": "/memories",
+      "router_name": "router",
+      "router_prefix": "",
+      "source_file": "api/routes/admin/entities.py",
+      "source_line": 99,
+      "included_in_sdk": false,
+      "reason": "Excluded pattern: /memories"
+    },
+    {
+      "method": "DELETE",
+      "path": "/memories/{memory_id}",
+      "router_name": "router",
+      "router_prefix": "",
+      "source_file": "api/routes/admin/entities.py",
+      "source_line": 121,
+      "included_in_sdk": false,
+      "reason": "Excluded pattern: /memories"
+    },
+    {
+      "method": "GET",
+      "path": "/memory",
+      "router_name": "router",
+      "router_prefix": "",
+      "source_file": "api/routes/admin/entities.py",
+      "source_line": 100,
+      "included_in_sdk": false,
+      "reason": "Excluded pattern: /memory"
+    },
+    {
+      "method": "DELETE",
+      "path": "/memory/{memory_id}",
+      "router_name": "router",
+      "router_prefix": "",
+      "source_file": "api/routes/admin/entities.py",
+      "source_line": 122,
+      "included_in_sdk": false,
+      "reason": "Excluded pattern: /memory"
+    },
+    {
+      "method": "GET",
+      "path": "/memory_topics",
+      "router_name": "router",
+      "router_prefix": "",
+      "source_file": "api/routes/admin/entities.py",
+      "source_line": 112,
+      "included_in_sdk": false,
+      "reason": "Excluded pattern: /memory"
+    },
+    {
+      "method": "GET",
+      "path": "/sessions",
+      "router_name": "router",
+      "router_prefix": "",
+      "source_file": "api/routes/admin/entities.py",
+      "source_line": 30,
+      "included_in_sdk": false,
+      "reason": "Excluded pattern: /sessions"
+    },
+    {
+      "method": "DELETE",
+      "path": "/sessions/{session_id}",
+      "router_name": "router",
+      "router_prefix": "",
+      "source_file": "api/routes/admin/entities.py",
+      "source_line": 89,
+      "included_in_sdk": false,
+      "reason": "Excluded pattern: /sessions"
+    },
+    {
+      "method": "GET",
+      "path": "/sessions/{session_id}",
+      "router_name": "router",
+      "router_prefix": "",
+      "source_file": "api/routes/admin/entities.py",
+      "source_line": 51,
+      "included_in_sdk": false,
+      "reason": "Excluded pattern: /sessions"
+    },
+    {
+      "method": "GET",
+      "path": "/user_memory_stats",
+      "router_name": "router",
+      "router_prefix": "",
+      "source_file": "api/routes/admin/entities.py",
+      "source_line": 130,
+      "included_in_sdk": false,
+      "reason": "Excluded pattern: /user_memory_stats"
+    },
+    {
+      "method": "GET",
+      "path": "/version",
+      "router_name": "router",
+      "router_prefix": "",
+      "source_file": "api/routes/public/version.py",
+      "source_line": 35,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "GET",
+      "path": "/whoami",
+      "router_name": "identity_router",
+      "router_prefix": "",
+      "source_file": "api/routes/public/users.py",
+      "source_line": 807,
+      "included_in_sdk": true,
+      "reason": null
+    }
+  ]
+}
