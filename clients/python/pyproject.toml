@@ -18,6 +18,9 @@ dependencies = [
 dev = [
   "pytest>=8.0.0",
 ]
+clerk = [
+  "clerk-backend-api",
+]
 
 [tool.setuptools]
 package-dir = {"" = "src"}
