@@ -17,6 +17,12 @@ pip install -e .
 pip install "git+https://github.com/cienai/cien-agent-sdk.git@main#subdirectory=clients/python"
 ```
 
+### Optional: Clerk helpers
+
+```bash
+pip install -e ".[clerk]"
+```
+
 ## Quick Start
 
 ```python
@@ -67,4 +73,16 @@ except APIError as exc:
     print(exc.status_code, exc.message, exc.response_body)
 except RequestError as exc:
     print(str(exc))
+```
+
+## Clerk API Key Helpers
+
+```python
+from cien_agent_sdk import ClerkHelper
+
+clerk = ClerkHelper(bearer_auth="<CLERK_SECRET_KEY>")
+
+user_id = clerk.get_user_id_by_email("user@example.com")
+api_key = clerk.create_user_api_key(user_id=user_id)
+secret = clerk.get_user_api_key_secret(user_id=user_id)
 ```
