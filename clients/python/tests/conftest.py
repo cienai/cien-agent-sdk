@@ -8,6 +8,7 @@ import pytest
 
 DEFAULT_TEST_BASE_URL = "https://api.example.com"
 DEFAULT_TEST_CLERK_API_TOKEN = "sk_test_dummy"
+DEFAULT_TEST_COID = "coid_test"
 
 
 def _add_src_to_path() -> None:
@@ -38,6 +39,12 @@ def pytest_addoption(parser: pytest.Parser) -> None:
         default=False,
         help="Force live API integration tests.",
     )
+    parser.addoption(
+        "--coid",
+        action="store",
+        default=os.getenv("CIEN_SDK_TEST_COID", DEFAULT_TEST_COID),
+        help="Company id used by SDK tests that require a coid.",
+    )
 
 
 @pytest.fixture
@@ -48,6 +55,11 @@ def base_url(request: pytest.FixtureRequest) -> str:
 @pytest.fixture
 def clerk_api_token(request: pytest.FixtureRequest) -> str:
     return str(request.config.getoption("--clerk-api-token"))
+
+
+@pytest.fixture
+def coid(request: pytest.FixtureRequest) -> str:
+    return str(request.config.getoption("--coid"))
 
 
 @pytest.fixture
