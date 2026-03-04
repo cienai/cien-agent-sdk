@@ -40,8 +40,8 @@ Methods are available from `client.admin`.
   Gets one partner by ID.
 - `create(name, clerk_org_id=None, is_active=True)`
   Creates a partner.
-- `update(partner_id, name=None, clerk_org_id=None, is_active=None, is_deleted=None)`
-  Updates an existing partner.
+- `update(partner_id, name=None, clerk_org_id=None, clerk_org_slug=None, max_allowed_memberships=None, public_metadata=None, private_metadata=None, is_active=None, is_deleted=None)`
+  Updates an existing partner and supports Clerk organization-native fields.
 - `delete(partner_id)`
   Deletes a partner.
 

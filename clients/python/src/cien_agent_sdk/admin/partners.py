@@ -43,6 +43,10 @@ class AdminPartnersAPI(EndpointGroup):
         *,
         name: str | None = None,
         clerk_org_id: str | None = None,
+        clerk_org_slug: str | None = None,
+        max_allowed_memberships: int | None = None,
+        public_metadata: dict[str, Any] | None = None,
+        private_metadata: dict[str, Any] | None = None,
         is_active: bool | None = None,
         is_deleted: bool | None = None,
     ) -> dict[str, Any]:
@@ -53,6 +57,10 @@ class AdminPartnersAPI(EndpointGroup):
                 {
                     "name": name,
                     "clerk_org_id": clerk_org_id,
+                    "clerk_org_slug": clerk_org_slug,
+                    "max_allowed_memberships": max_allowed_memberships,
+                    "public_metadata": public_metadata,
+                    "private_metadata": private_metadata,
                     "is_active": is_active,
                     "is_deleted": is_deleted,
                 }
