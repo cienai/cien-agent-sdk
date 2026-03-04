@@ -60,8 +60,10 @@ Methods are available from `client.admin`.
 
 ## `sync`
 
-- `list(coid, sync_type=None, is_active=None)`
-  Lists sync records for a company.
+- `list(coid=None, sync_token=None, sync_type=None, is_active=None)`
+  Lists sync records filtered by company id and/or sync token. At least one of `coid` or `sync_token` is required.
+- `get_by_sync_token(sync_token)`
+  Gets one sync record by sync token via `/api/admin/sync/by-token/{sync_token}` (or `None` if not found).
 - `get(sync_id)`
   Gets one sync record.
 - `create(payload)`
