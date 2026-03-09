@@ -57,3 +57,14 @@ class AdminSyncAPI(EndpointGroup):
     def delete(self, sync_id: int) -> None:
         """Delete a sync record by ID."""
         self._delete(f"/api/admin/sync/{sync_id}")
+
+    def reset(self, *, coid: str, crm_entity: str, reset_delta: bool = True) -> dict[str, Any]:
+        """Reset sync state for one CRM entity."""
+        return self._post(
+            "/api/admin/sync/reset",
+            json={
+                "coid": coid,
+                "crm_entity": crm_entity,
+                "reset_delta": reset_delta,
+            },
+        )

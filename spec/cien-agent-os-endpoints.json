@@ -1,8 +1,8 @@
 {
-  "generated_at_utc": "2026-02-20T10:18:21.512471+00:00",
+  "generated_at_utc": "2026-03-09T09:53:42.095881+00:00",
   "agent_os_path": "/home/ben/cien-agent/cien-agent-os",
-  "endpoint_count": 83,
-  "sdk_included_count": 60,
+  "endpoint_count": 97,
+  "sdk_included_count": 74,
   "endpoints": [
     {
       "method": "GET",
@@ -10,7 +10,37 @@
       "router_name": "router",
       "router_prefix": "/api/admin/companies",
       "source_file": "api/routes/admin/companies.py",
-      "source_line": 202,
+      "source_line": 446,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "POST",
+      "path": "/api/admin/companies",
+      "router_name": "router",
+      "router_prefix": "/api/admin/companies",
+      "source_file": "api/routes/admin/companies.py",
+      "source_line": 482,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/admin/companies-history/{coid}",
+      "router_name": "router",
+      "router_prefix": "/api/admin/companies-history",
+      "source_file": "api/routes/admin/companies_history.py",
+      "source_line": 136,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/admin/companies-history/{coid}",
+      "router_name": "router",
+      "router_prefix": "/api/admin/companies-history",
+      "source_file": "api/routes/admin/companies_history.py",
+      "source_line": 157,
       "included_in_sdk": true,
       "reason": null
     },
@@ -20,7 +50,7 @@
       "router_name": "router",
       "router_prefix": "/api/admin/companies",
       "source_file": "api/routes/admin/companies.py",
-      "source_line": 254,
+      "source_line": 539,
       "included_in_sdk": true,
       "reason": null
     },
@@ -30,7 +60,7 @@
       "router_name": "router",
       "router_prefix": "/api/admin/companies",
       "source_file": "api/routes/admin/companies.py",
-      "source_line": 255,
+      "source_line": 540,
       "included_in_sdk": true,
       "reason": null
     },
@@ -40,7 +70,7 @@
       "router_name": "router",
       "router_prefix": "/api/admin/companies",
       "source_file": "api/routes/admin/companies.py",
-      "source_line": 276,
+      "source_line": 557,
       "included_in_sdk": true,
       "reason": null
     },
@@ -50,7 +80,27 @@
       "router_name": "router",
       "router_prefix": "/api/admin/companies",
       "source_file": "api/routes/admin/companies.py",
-      "source_line": 238,
+      "source_line": 507,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "POST",
+      "path": "/api/admin/crm/describe",
+      "router_name": "router",
+      "router_prefix": "/api/admin/crm",
+      "source_file": "api/routes/admin/crm.py",
+      "source_line": 52,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "POST",
+      "path": "/api/admin/crm/query",
+      "router_name": "router",
+      "router_prefix": "/api/admin/crm",
+      "source_file": "api/routes/admin/crm.py",
+      "source_line": 65,
       "included_in_sdk": true,
       "reason": null
     },
@@ -60,7 +110,7 @@
       "router_name": "router",
       "router_prefix": "/api/admin/environments",
       "source_file": "api/routes/admin/environments.py",
-      "source_line": 316,
+      "source_line": 321,
       "included_in_sdk": true,
       "reason": null
     },
@@ -70,7 +120,7 @@
       "router_name": "router",
       "router_prefix": "/api/admin/environments",
       "source_file": "api/routes/admin/environments.py",
-      "source_line": 368,
+      "source_line": 373,
       "included_in_sdk": true,
       "reason": null
     },
@@ -80,7 +130,7 @@
       "router_name": "router",
       "router_prefix": "/api/admin/environments",
       "source_file": "api/routes/admin/environments.py",
-      "source_line": 413,
+      "source_line": 418,
       "included_in_sdk": true,
       "reason": null
     },
@@ -90,7 +140,7 @@
       "router_name": "router",
       "router_prefix": "/api/admin/environments",
       "source_file": "api/routes/admin/environments.py",
-      "source_line": 349,
+      "source_line": 354,
       "included_in_sdk": true,
       "reason": null
     },
@@ -100,7 +150,7 @@
       "router_name": "router",
       "router_prefix": "/api/admin/environments",
       "source_file": "api/routes/admin/environments.py",
-      "source_line": 395,
+      "source_line": 400,
       "included_in_sdk": true,
       "reason": null
     },
@@ -110,7 +160,47 @@
       "router_name": "router",
       "router_prefix": "/api/admin/environments",
       "source_file": "api/routes/admin/environments.py",
-      "source_line": 430,
+      "source_line": 435,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/admin/mappings/{coid}/cien-entity",
+      "router_name": "router",
+      "router_prefix": "/api/admin/mappings",
+      "source_file": "api/routes/admin/mappings.py",
+      "source_line": 75,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/admin/mappings/{coid}/crm-entities",
+      "router_name": "router",
+      "router_prefix": "/api/admin/mappings",
+      "source_file": "api/routes/admin/mappings.py",
+      "source_line": 66,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/admin/mappings/{coid}/{crm_entity}",
+      "router_name": "router",
+      "router_prefix": "/api/admin/mappings",
+      "source_file": "api/routes/admin/mappings.py",
+      "source_line": 83,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "PUT",
+      "path": "/api/admin/mappings/{coid}/{crm_entity}",
+      "router_name": "router",
+      "router_prefix": "/api/admin/mappings",
+      "source_file": "api/routes/admin/mappings.py",
+      "source_line": 92,
       "included_in_sdk": true,
       "reason": null
     },
@@ -120,7 +210,7 @@
       "router_name": "entity_router",
       "router_prefix": "/api/admin/partners",
       "source_file": "api/routes/admin/partners.py",
-      "source_line": 77,
+      "source_line": 214,
       "included_in_sdk": true,
       "reason": null
     },
@@ -130,7 +220,7 @@
       "router_name": "entity_router",
       "router_prefix": "/api/admin/partners",
       "source_file": "api/routes/admin/partners.py",
-      "source_line": 134,
+      "source_line": 256,
       "included_in_sdk": true,
       "reason": null
     },
@@ -140,7 +230,7 @@
       "router_name": "entity_router",
       "router_prefix": "/api/admin/partners",
       "source_file": "api/routes/admin/partners.py",
-      "source_line": 251,
+      "source_line": 391,
       "included_in_sdk": true,
       "reason": null
     },
@@ -150,7 +240,7 @@
       "router_name": "entity_router",
       "router_prefix": "/api/admin/partners",
       "source_file": "api/routes/admin/partners.py",
-      "source_line": 122,
+      "source_line": 242,
       "included_in_sdk": true,
       "reason": null
     },
@@ -160,7 +250,7 @@
       "router_name": "entity_router",
       "router_prefix": "/api/admin/partners",
       "source_file": "api/routes/admin/partners.py",
-      "source_line": 184,
+      "source_line": 317,
       "included_in_sdk": true,
       "reason": null
     },
@@ -220,7 +310,7 @@
       "router_name": "router",
       "router_prefix": "/api/admin/sync",
       "source_file": "api/routes/admin/sync.py",
-      "source_line": 132,
+      "source_line": 230,
       "included_in_sdk": true,
       "reason": null
     },
@@ -230,7 +320,7 @@
       "router_name": "router",
       "router_prefix": "/api/admin/sync",
       "source_file": "api/routes/admin/sync.py",
-      "source_line": 186,
+      "source_line": 359,
       "included_in_sdk": true,
       "reason": null
     },
@@ -295,12 +385,32 @@
       "reason": null
     },
     {
+      "method": "GET",
+      "path": "/api/admin/sync/by-token/{sync_token}",
+      "router_name": "router",
+      "router_prefix": "/api/admin/sync",
+      "source_file": "api/routes/admin/sync.py",
+      "source_line": 281,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "POST",
+      "path": "/api/admin/sync/reset",
+      "router_name": "router",
+      "router_prefix": "/api/admin/sync",
+      "source_file": "api/routes/admin/sync.py",
+      "source_line": 335,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
       "method": "DELETE",
       "path": "/api/admin/sync/{sync_id}",
       "router_name": "router",
       "router_prefix": "/api/admin/sync",
       "source_file": "api/routes/admin/sync.py",
-      "source_line": 270,
+      "source_line": 444,
       "included_in_sdk": true,
       "reason": null
     },
@@ -310,7 +420,7 @@
       "router_name": "router",
       "router_prefix": "/api/admin/sync",
       "source_file": "api/routes/admin/sync.py",
-      "source_line": 175,
+      "source_line": 295,
       "included_in_sdk": true,
       "reason": null
     },
@@ -320,7 +430,17 @@
       "router_name": "router",
       "router_prefix": "/api/admin/sync",
       "source_file": "api/routes/admin/sync.py",
-      "source_line": 233,
+      "source_line": 406,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/admin/sync/{sync_id}/setup-url",
+      "router_name": "router",
+      "router_prefix": "/api/admin/sync",
+      "source_file": "api/routes/admin/sync.py",
+      "source_line": 306,
       "included_in_sdk": true,
       "reason": null
     },
@@ -520,7 +640,17 @@
       "router_name": "router",
       "router_prefix": "/api/config",
       "source_file": "api/routes/public/config.py",
-      "source_line": 43,
+      "source_line": 51,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/config",
+      "router_name": "router",
+      "router_prefix": "/api/config",
+      "source_file": "api/routes/public/config.py",
+      "source_line": 52,
       "included_in_sdk": true,
       "reason": null
     },
@@ -530,7 +660,17 @@
       "router_name": "router",
       "router_prefix": "/api/config",
       "source_file": "api/routes/public/config.py",
-      "source_line": 78,
+      "source_line": 82,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "PUT",
+      "path": "/api/config/{coid}",
+      "router_name": "router",
+      "router_prefix": "/api/config",
+      "source_file": "api/routes/public/config.py",
+      "source_line": 99,
       "included_in_sdk": true,
       "reason": null
     },
@@ -540,7 +680,7 @@
       "router_name": "router",
       "router_prefix": "/api/config",
       "source_file": "api/routes/public/config.py",
-      "source_line": 97,
+      "source_line": 116,
       "included_in_sdk": true,
       "reason": null
     },
@@ -550,7 +690,7 @@
       "router_name": "router",
       "router_prefix": "/api/config",
       "source_file": "api/routes/public/config.py",
-      "source_line": 63,
+      "source_line": 65,
       "included_in_sdk": true,
       "reason": null
     },
@@ -660,7 +800,7 @@
       "router_name": "router",
       "router_prefix": "/api/users",
       "source_file": "api/routes/public/users.py",
-      "source_line": 670,
+      "source_line": 737,
       "included_in_sdk": true,
       "reason": null
     },
@@ -670,7 +810,7 @@
       "router_name": "router",
       "router_prefix": "/api/users",
       "source_file": "api/routes/public/users.py",
-      "source_line": 650,
+      "source_line": 717,
       "included_in_sdk": true,
       "reason": null
     },
@@ -680,7 +820,7 @@
       "router_name": "router",
       "router_prefix": "/api/users",
       "source_file": "api/routes/public/users.py",
-      "source_line": 633,
+      "source_line": 700,
       "included_in_sdk": true,
       "reason": null
     },
@@ -690,7 +830,7 @@
       "router_name": "router",
       "router_prefix": "/api/users",
       "source_file": "api/routes/public/users.py",
-      "source_line": 625,
+      "source_line": 638,
       "included_in_sdk": true,
       "reason": null
     },
@@ -700,7 +840,7 @@
       "router_name": "router",
       "router_prefix": "/api/users",
       "source_file": "api/routes/public/users.py",
-      "source_line": 745,
+      "source_line": 812,
       "included_in_sdk": true,
       "reason": null
     },
@@ -710,7 +850,7 @@
       "router_name": "router",
       "router_prefix": "/api/users",
       "source_file": "api/routes/public/users.py",
-      "source_line": 551,
+      "source_line": 564,
       "included_in_sdk": true,
       "reason": null
     },
@@ -720,7 +860,7 @@
       "router_name": "router",
       "router_prefix": "/api/users",
       "source_file": "api/routes/public/users.py",
-      "source_line": 585,
+      "source_line": 598,
       "included_in_sdk": true,
       "reason": null
     },
@@ -830,7 +970,7 @@
       "router_name": "identity_router",
       "router_prefix": "",
       "source_file": "api/routes/public/users.py",
-      "source_line": 807,
+      "source_line": 874,
       "included_in_sdk": true,
       "reason": null
     }

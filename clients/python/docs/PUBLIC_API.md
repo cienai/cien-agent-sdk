@@ -49,6 +49,8 @@ Methods are available from `client.public`.
   Gets one config value.
 - `save(coid, key, config_type, value=None)`
   Creates or updates one config value.
+- `update(coid, config)`
+  Merges and persists multiple config values in one request.
 - `delete(coid, key)`
   Deletes one config value.
 

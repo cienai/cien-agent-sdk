@@ -62,3 +62,22 @@ def test_get_by_sync_token_returns_none_when_not_found(base_url: str) -> None:
     result = api.get_by_sync_token("missing-token")
 
     assert result is None
+
+
+def test_reset_posts_expected_payload(base_url: str) -> None:
+    session = Mock()
+    session.request.return_value = Mock(
+        status_code=200,
+        content=b'{"message":"success"}',
+        headers={"content-type": "application/json"},
+        json=Mock(return_value={"message": "success"}),
+    )
+    api = AdminSyncAPI(HTTPTransport(base_url=base_url, session=session))
+
+    result = api.reset(coid="co-1", crm_entity="Account", reset_delta=False)
+
+    assert result == {"message": "success"}
+    called_url = session.request.call_args.kwargs["url"]
+    payload = session.request.call_args.kwargs["json"]
+    assert called_url.endswith("/api/admin/sync/reset")
+    assert payload == {"coid": "co-1", "crm_entity": "Account", "reset_delta": False}

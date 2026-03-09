@@ -44,6 +44,13 @@ class PublicConfigAPI(EndpointGroup):
             json={"key": key, "type": config_type, "value": value},
         )
 
+    def update(self, *, coid: str, config: list[dict[str, Any]]) -> list[dict[str, Any]]:
+        """Merge and persist multiple configuration entries for one company."""
+        return self._put(
+            f"/api/config/{coid}",
+            json={"config": config},
+        )
+
     def delete(self, *, coid: str, key: str) -> None:
         """Delete a configuration value for a company and key."""
         self._delete(f"/api/config/{coid}/{key}")

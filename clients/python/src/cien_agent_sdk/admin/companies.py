@@ -61,6 +61,18 @@ class AdminCompaniesAPI(EndpointGroup):
         )
         return self._post("/api/admin/companies/search", json=payload)
 
+    def create(
+        self,
+        *,
+        data: dict[str, Any],
+        selected_columns: list[str] | None = None,
+    ) -> dict[str, Any]:
+        """Create one company through the admin API."""
+        return self._post(
+            "/api/admin/companies",
+            json={"data": data, "selected_columns": selected_columns},
+        )
+
     def get(self, coid: str, *, selected_columns: list[str] | None = None) -> dict[str, Any]:
         """Fetch one company record by COID through admin APIs."""
         return self._get(
