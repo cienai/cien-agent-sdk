@@ -20,6 +20,10 @@ class EndpointGroup:
         """Send a POST request for an endpoint path."""
         return self._transport.request("POST", path, json=json, params=params)
 
+    def _put(self, path: str, *, json: Any | None = None, params: dict[str, Any] | None = None) -> Any:
+        """Send a PUT request for an endpoint path."""
+        return self._transport.request("PUT", path, json=json, params=params)
+
     def _patch(self, path: str, *, json: Any | None = None, params: dict[str, Any] | None = None) -> Any:
         """Send a PATCH request for an endpoint path."""
         return self._transport.request("PATCH", path, json=json, params=params)
