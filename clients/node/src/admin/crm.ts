@@ -1,0 +1,17 @@
+import { EndpointGroup } from '../base.js'
+
+export class AdminCrmAPI extends EndpointGroup {
+  describe(payload: { coid: string; table: string; column_names_only?: boolean }) {
+    return this.post<unknown>('/api/admin/crm/describe', {
+      json: {
+        coid: payload.coid,
+        table: payload.table,
+        column_names_only: payload.column_names_only ?? false,
+      },
+    })
+  }
+
+  query(payload: { coid: string; table: string; query: string; limit?: number }) {
+    return this.post<unknown>('/api/admin/crm/query', { json: payload })
+  }
+}
