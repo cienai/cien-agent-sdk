@@ -1,26 +1,26 @@
-import { EndpointGroup } from '../base.js'
+import { EndpointGroup } from '../base'
 
 export class PublicPowerBIAPI extends EndpointGroup {
   listWorkspaces() {
-    return this.get<Array<Record<string, unknown>>>('/api/powerbi/workspaces')
+    return this.requestGet<Array<Record<string, unknown>>>('/api/powerbi/workspaces')
   }
 
   getWorkspace(workspaceId: string) {
-    return this.get<Record<string, unknown>>(`/api/powerbi/workspaces/${workspaceId}`)
+    return this.requestGet<Record<string, unknown>>(`/api/powerbi/workspaces/${workspaceId}`)
   }
 
   listReports(workspaceId: string) {
-    return this.get<Array<Record<string, unknown>>>(`/api/powerbi/workspaces/${workspaceId}/reports`)
+    return this.requestGet<Array<Record<string, unknown>>>(`/api/powerbi/workspaces/${workspaceId}/reports`)
   }
 
   listReportPages(workspaceId: string, reportId: string) {
-    return this.get<Array<Record<string, unknown>>>(
+    return this.requestGet<Array<Record<string, unknown>>>(
       `/api/powerbi/workspaces/${workspaceId}/reports/${reportId}/pages`
     )
   }
 
   listDatasets(workspaceId: string) {
-    return this.get<Array<Record<string, unknown>>>(`/api/powerbi/workspaces/${workspaceId}/datasets`)
+    return this.requestGet<Array<Record<string, unknown>>>(`/api/powerbi/workspaces/${workspaceId}/datasets`)
   }
 
   generateEmbedToken(
@@ -33,7 +33,7 @@ export class PublicPowerBIAPI extends EndpointGroup {
       allow_save_as?: boolean
     } = {}
   ) {
-    return this.post<Record<string, unknown>>(
+    return this.requestPost<Record<string, unknown>>(
       `/api/powerbi/workspaces/${workspaceId}/reports/${reportId}/embed-token`,
       {
         json: {

@@ -1,10 +1,10 @@
-import { HTTPTransport } from '../transport.js'
-import { PublicCompaniesAPI } from './companies.js'
-import { PublicConfigAPI } from './config.js'
-import { PublicPowerBIAPI } from './powerbi.js'
-import { PublicUserCompanyPermissionsAPI } from './user-company-permissions.js'
-import { PublicUsersAPI } from './users.js'
-import { PublicVersionAPI } from './version.js'
+import { HTTPTransport } from '../transport'
+import { PublicCompaniesAPI } from './companies'
+import { PublicConfigAPI } from './config'
+import { PublicPowerBIAPI } from './powerbi'
+import { PublicUserCompanyPermissionsAPI } from './user-company-permissions'
+import { PublicUsersAPI } from './users'
+import { PublicVersionAPI } from './version'
 
 export class PublicClient {
   readonly companies: PublicCompaniesAPI

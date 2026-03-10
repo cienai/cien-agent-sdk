@@ -1,5 +1,5 @@
-import { EndpointGroup } from '../base.js'
-import { dropNullish } from '../utils.js'
+import { EndpointGroup } from '../base'
+import { dropNullish } from '../utils'
 
 export class AdminPartnersAPI extends EndpointGroup {
   list(params: {
@@ -7,7 +7,7 @@ export class AdminPartnersAPI extends EndpointGroup {
     include_inactive?: boolean
     show_all?: boolean
   } = {}) {
-    return super.get<Array<Record<string, unknown>>>('/api/admin/partners', {
+    return super.requestGet<Array<Record<string, unknown>>>('/api/admin/partners', {
       params: {
         include_deleted: params.include_deleted ?? false,
         include_inactive: params.include_inactive ?? true,
@@ -17,11 +17,11 @@ export class AdminPartnersAPI extends EndpointGroup {
   }
 
   get(partnerId: number) {
-    return super.get<Record<string, unknown>>(`/api/admin/partners/${partnerId}`)
+    return super.requestGet<Record<string, unknown>>(`/api/admin/partners/${partnerId}`)
   }
 
   create(payload: { name: string; clerk_org_id?: string; is_active?: boolean }) {
-    return this.post<Record<string, unknown>>('/api/admin/partners', {
+    return this.requestPost<Record<string, unknown>>('/api/admin/partners', {
       json: dropNullish({ ...payload, is_active: payload.is_active ?? true }),
     })
   }
@@ -39,12 +39,12 @@ export class AdminPartnersAPI extends EndpointGroup {
       is_deleted?: boolean
     }
   ) {
-    return this.patch<Record<string, unknown>>(`/api/admin/partners/${partnerId}`, {
+    return this.requestPatch<Record<string, unknown>>(`/api/admin/partners/${partnerId}`, {
       json: dropNullish(payload),
     })
   }
 
   delete(partnerId: number) {
-    return super.delete<Record<string, unknown>>(`/api/admin/partners/${partnerId}`)
+    return super.requestDelete<Record<string, unknown>>(`/api/admin/partners/${partnerId}`)
   }
 }

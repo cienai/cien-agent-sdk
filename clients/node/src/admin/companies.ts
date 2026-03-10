@@ -1,5 +1,5 @@
-import { EndpointGroup } from '../base.js'
-import { dropNullish } from '../utils.js'
+import { EndpointGroup } from '../base'
+import { dropNullish } from '../utils'
 
 export class AdminCompaniesAPI extends EndpointGroup {
   list(params: {
@@ -11,7 +11,7 @@ export class AdminCompaniesAPI extends EndpointGroup {
     limit?: number
     natural_query?: string
   } = {}) {
-    return super.get<Array<Record<string, unknown>>>('/api/admin/companies', {
+    return super.requestGet<Array<Record<string, unknown>>>('/api/admin/companies', {
       params: dropNullish(params),
     })
   }
@@ -25,17 +25,17 @@ export class AdminCompaniesAPI extends EndpointGroup {
     limit?: number
     natural_query?: string
   } = {}) {
-    return this.post<Array<Record<string, unknown>>>('/api/admin/companies/search', {
+    return this.requestPost<Array<Record<string, unknown>>>('/api/admin/companies/search', {
       json: dropNullish(payload),
     })
   }
 
   create(payload: { data: Record<string, unknown>; selected_columns?: string[] }) {
-    return this.post<Record<string, unknown>>('/api/admin/companies', { json: payload })
+    return this.requestPost<Record<string, unknown>>('/api/admin/companies', { json: payload })
   }
 
   get(coid: string, params: { selected_columns?: string[] } = {}) {
-    return super.get<Record<string, unknown>>('/api/admin/companies/companies', {
+    return super.requestGet<Record<string, unknown>>('/api/admin/companies/companies', {
       params: dropNullish({ coid, ...params }),
     })
   }
@@ -45,7 +45,7 @@ export class AdminCompaniesAPI extends EndpointGroup {
     company_name?: string
     selected_columns?: string[]
   }) {
-    return super.get<Record<string, unknown>>('/api/admin/companies/lookup', {
+    return super.requestGet<Record<string, unknown>>('/api/admin/companies/lookup', {
       params: dropNullish(params),
     })
   }
@@ -54,12 +54,12 @@ export class AdminCompaniesAPI extends EndpointGroup {
     companyId: string,
     payload: { updates: Record<string, unknown>; selected_columns?: string[] }
   ) {
-    return this.patch<Record<string, unknown>>(`/api/admin/companies/${companyId}`, {
+    return this.requestPatch<Record<string, unknown>>(`/api/admin/companies/${companyId}`, {
       json: payload,
     })
   }
 
   delete(companyId: string) {
-    return super.delete<Record<string, unknown>>(`/api/admin/companies/${companyId}`)
+    return super.requestDelete<Record<string, unknown>>(`/api/admin/companies/${companyId}`)
   }
 }

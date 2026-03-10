@@ -1,6 +1,6 @@
-import { APIError } from '../errors.js'
-import { EndpointGroup } from '../base.js'
-import { dropNullish } from '../utils.js'
+import { APIError } from '../errors'
+import { EndpointGroup } from '../base'
+import { dropNullish } from '../utils'
 
 export class AdminSyncAPI extends EndpointGroup {
   list(params: {
@@ -12,7 +12,7 @@ export class AdminSyncAPI extends EndpointGroup {
     if (!params.coid && !params.sync_token) {
       throw new TypeError('Either coid or sync_token is required')
     }
-    return super.get<Array<Record<string, unknown>>>('/api/admin/sync', {
+    return super.requestGet<Array<Record<string, unknown>>>('/api/admin/sync', {
       params: dropNullish({
         coid: params.coid,
         sync_token: params.sync_token,
@@ -24,7 +24,7 @@ export class AdminSyncAPI extends EndpointGroup {
 
   async getBySyncToken(syncToken: string) {
     try {
-      return await super.get<Record<string, unknown>>(`/api/admin/sync/by-token/${syncToken}`)
+      return await super.requestGet<Record<string, unknown>>(`/api/admin/sync/by-token/${syncToken}`)
     } catch (error) {
       if (error instanceof APIError && error.statusCode === 404) {
         return null
@@ -34,25 +34,25 @@ export class AdminSyncAPI extends EndpointGroup {
   }
 
   get(syncId: number) {
-    return super.get<Record<string, unknown>>(`/api/admin/sync/${syncId}`)
+    return super.requestGet<Record<string, unknown>>(`/api/admin/sync/${syncId}`)
   }
 
   create(payload: Record<string, unknown>) {
-    return this.post<Record<string, unknown>>('/api/admin/sync', { json: payload })
+    return this.requestPost<Record<string, unknown>>('/api/admin/sync', { json: payload })
   }
 
   update(syncId: number, payload: Record<string, unknown>) {
-    return this.patch<Record<string, unknown>>(`/api/admin/sync/${syncId}`, {
+    return this.requestPatch<Record<string, unknown>>(`/api/admin/sync/${syncId}`, {
       json: payload,
     })
   }
 
   async delete(syncId: number) {
-    await super.delete(`/api/admin/sync/${syncId}`)
+    await super.requestDelete(`/api/admin/sync/${syncId}`)
   }
 
   reset(payload: { coid: string; crm_entity: string; reset_delta?: boolean }) {
-    return this.post<Record<string, unknown>>('/api/admin/sync/reset', {
+    return this.requestPost<Record<string, unknown>>('/api/admin/sync/reset', {
       json: {
         coid: payload.coid,
         crm_entity: payload.crm_entity,

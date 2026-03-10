@@ -1,15 +1,15 @@
-import { EndpointGroup } from '../base.js'
-import { dropNullish } from '../utils.js'
+import { EndpointGroup } from '../base'
+import { dropNullish } from '../utils'
 
 export class AdminEnvironmentsAPI extends EndpointGroup {
   list(params: { coid: string; include_sync?: boolean }) {
-    return super.get<Record<string, unknown>>('/api/admin/environments', {
+    return super.requestGet<Record<string, unknown>>('/api/admin/environments', {
       params: { coid: params.coid, include_sync: params.include_sync ?? false },
     })
   }
 
   get(coid: string, params: { environment?: string; include_sync?: boolean } = {}) {
-    return super.get<Record<string, unknown>>(`/api/admin/environments/${coid}`, {
+    return super.requestGet<Record<string, unknown>>(`/api/admin/environments/${coid}`, {
       params: {
         environment: params.environment ?? 'staging',
         include_sync: params.include_sync ?? false,
@@ -18,21 +18,21 @@ export class AdminEnvironmentsAPI extends EndpointGroup {
   }
 
   create(payload: { data: Record<string, unknown>; environment?: string }) {
-    return this.post<Record<string, unknown>>('/api/admin/environments', {
+    return this.requestPost<Record<string, unknown>>('/api/admin/environments', {
       params: { environment: payload.environment ?? 'staging' },
       json: { data: payload.data },
     })
   }
 
   update(coid: string, payload: { updates: Record<string, unknown>; environment?: string }) {
-    return this.patch<Record<string, unknown>>(`/api/admin/environments/${coid}`, {
+    return this.requestPatch<Record<string, unknown>>(`/api/admin/environments/${coid}`, {
       params: { environment: payload.environment ?? 'staging' },
       json: { updates: payload.updates },
     })
   }
 
   delete(coid: string, params: { environment?: string } = {}) {
-    return super.delete<Record<string, unknown>>(`/api/admin/environments/${coid}`, {
+    return super.requestDelete<Record<string, unknown>>(`/api/admin/environments/${coid}`, {
       params: { environment: params.environment ?? 'staging' },
     })
   }
@@ -46,7 +46,7 @@ export class AdminEnvironmentsAPI extends EndpointGroup {
       overwrite_sync?: boolean
     } = {}
   ) {
-    return this.post<Record<string, unknown>>(`/api/admin/environments/${coid}/copy`, {
+    return this.requestPost<Record<string, unknown>>(`/api/admin/environments/${coid}/copy`, {
       json: dropNullish({
         source_environment: payload.source_environment ?? 'prod',
         destination_environment: payload.destination_environment ?? 'staging',
