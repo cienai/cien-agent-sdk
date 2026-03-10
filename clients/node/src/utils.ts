@@ -1,4 +1,4 @@
-import type { QueryParams } from './types'
+import type { QueryParams, RequestHeaders } from './types'
 
 export function dropNullish<T extends Record<string, unknown>>(data: T): Partial<T> {
   return Object.fromEntries(
@@ -22,7 +22,7 @@ export function buildUrl(baseUrl: string, path: string, params?: QueryParams): s
 }
 
 export async function resolveHeaders(
-  headers: HeadersInit | (() => HeadersInit | Promise<HeadersInit | undefined>) | undefined
+  headers: RequestHeaders | undefined
 ): Promise<Headers> {
   const resolved = typeof headers === 'function' ? await headers() : headers
   return new Headers(resolved)
