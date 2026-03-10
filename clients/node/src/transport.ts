@@ -1,11 +1,11 @@
-import { APIError, RequestError } from './errors.js'
+import { APIError, RequestError } from './errors'
 import type {
   RequestOptions,
   TokenProvider,
   TransportOptions,
   FetchLike,
-} from './types.js'
-import { buildUrl, resolveHeaders } from './utils.js'
+} from './types'
+import { buildUrl, resolveHeaders } from './utils'
 
 function isAbortError(error: unknown): boolean {
   return error instanceof Error && error.name === 'AbortError'

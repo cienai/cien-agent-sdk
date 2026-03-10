@@ -1,4 +1,4 @@
-import { EndpointGroup } from '../base.js'
+import { EndpointGroup } from '../base'
 
 export class PublicPowerBIAPI extends EndpointGroup {
   listWorkspaces() {

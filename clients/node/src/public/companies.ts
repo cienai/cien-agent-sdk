@@ -1,5 +1,5 @@
-import { EndpointGroup } from '../base.js'
-import { dropNullish } from '../utils.js'
+import { EndpointGroup } from '../base'
+import { dropNullish } from '../utils'
 
 export class PublicCompaniesAPI extends EndpointGroup {
   list(params: {

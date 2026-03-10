@@ -1,4 +1,4 @@
-import { EndpointGroup } from '../base.js'
+import { EndpointGroup } from '../base'
 
 export class AdminCrmAPI extends EndpointGroup {
   describe(payload: { coid: string; table: string; column_names_only?: boolean }) {

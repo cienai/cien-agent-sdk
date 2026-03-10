@@ -1,5 +1,5 @@
-import { EndpointGroup } from '../base.js'
-import type { CompanyUserRoleFilter, PermissionRole, UserCompanyRoleFilter } from '../types.js'
+import { EndpointGroup } from '../base'
+import type { CompanyUserRoleFilter, PermissionRole, UserCompanyRoleFilter } from '../types'
 
 export class PublicUserCompanyPermissionsAPI extends EndpointGroup {
   listCompaniesForUser(params: { email: string; role?: UserCompanyRoleFilter }) {

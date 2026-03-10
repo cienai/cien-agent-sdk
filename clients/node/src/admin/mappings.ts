@@ -1,4 +1,4 @@
-import { EndpointGroup } from '../base.js'
+import { EndpointGroup } from '../base'
 
 export class AdminMappingsAPI extends EndpointGroup {
   listCrmEntities(coid: string) {

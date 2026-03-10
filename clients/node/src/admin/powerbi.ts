@@ -1,4 +1,4 @@
-import { EndpointGroup } from '../base.js'
+import { EndpointGroup } from '../base'
 
 export class AdminPowerBIAPI extends EndpointGroup {
   getWorkspace(workspaceId: string) {

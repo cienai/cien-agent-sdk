@@ -1,12 +1,12 @@
-import { HTTPTransport } from '../transport.js'
-import { AdminCompaniesAPI } from './companies.js'
-import { AdminCrmAPI } from './crm.js'
-import { AdminEnvironmentsAPI } from './environments.js'
-import { AdminMappingsAPI } from './mappings.js'
-import { AdminPartnersAPI } from './partners.js'
-import { AdminPowerBIAPI } from './powerbi.js'
-import { AdminSyncAPI } from './sync.js'
-import { AdminSyncSourceDefinitionsAPI } from './sync-source-definitions.js'
+import { HTTPTransport } from '../transport'
+import { AdminCompaniesAPI } from './companies'
+import { AdminCrmAPI } from './crm'
+import { AdminEnvironmentsAPI } from './environments'
+import { AdminMappingsAPI } from './mappings'
+import { AdminPartnersAPI } from './partners'
+import { AdminPowerBIAPI } from './powerbi'
+import { AdminSyncAPI } from './sync'
+import { AdminSyncSourceDefinitionsAPI } from './sync-source-definitions'
 
 export class AdminClient {
   readonly companies: AdminCompaniesAPI

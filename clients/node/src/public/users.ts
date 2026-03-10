@@ -1,5 +1,5 @@
-import { EndpointGroup } from '../base.js'
-import { dropNullish } from '../utils.js'
+import { EndpointGroup } from '../base'
+import { dropNullish } from '../utils'
 
 export class PublicUsersAPI extends EndpointGroup {
   issueToken(payload: { username: string; password: string }) {

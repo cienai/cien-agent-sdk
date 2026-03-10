@@ -1,6 +1,6 @@
-import { APIError } from '../errors.js'
-import { EndpointGroup } from '../base.js'
-import { dropNullish } from '../utils.js'
+import { APIError } from '../errors'
+import { EndpointGroup } from '../base'
+import { dropNullish } from '../utils'
 
 export class AdminSyncAPI extends EndpointGroup {
   list(params: {
