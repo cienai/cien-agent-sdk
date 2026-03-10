@@ -122,6 +122,6 @@ client = CienClient(
 
 This keeps endpoint discovery automated while preserving explicit, readable client method definitions.
 
-## Planned Next Step
+## Node SDK
 
-- Implement Node.js SDK under `clients/node` using the same module layout as Python.
+- `clients/node`: implemented fetch-based Node.js and Next.js SDK
