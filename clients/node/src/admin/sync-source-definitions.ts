@@ -3,17 +3,17 @@ import { dropNullish } from '../utils'
 
 export class AdminSyncSourceDefinitionsAPI extends EndpointGroup {
   list(params: { is_active?: boolean } = {}) {
-    return super.get<Array<Record<string, unknown>>>('/api/admin/sync-source-definitions', {
+    return super.requestGet<Array<Record<string, unknown>>>('/api/admin/sync-source-definitions', {
       params: dropNullish(params),
     })
   }
 
   get(definitionId: number) {
-    return super.get<Record<string, unknown>>(`/api/admin/sync-source-definitions/${definitionId}`)
+    return super.requestGet<Record<string, unknown>>(`/api/admin/sync-source-definitions/${definitionId}`)
   }
 
   getBySourceType(sourceType: string) {
-    return super.get<Record<string, unknown>>(
+    return super.requestGet<Record<string, unknown>>(
       `/api/admin/sync-source-definitions/source-type/${sourceType}`
     )
   }
@@ -26,7 +26,7 @@ export class AdminSyncSourceDefinitionsAPI extends EndpointGroup {
     required_settings?: unknown[]
     is_active?: boolean
   }) {
-    return this.post<Record<string, unknown>>('/api/admin/sync-source-definitions', {
+    return this.requestPost<Record<string, unknown>>('/api/admin/sync-source-definitions', {
       json: {
         ...payload,
         required_settings: payload.required_settings ?? [],
@@ -36,13 +36,13 @@ export class AdminSyncSourceDefinitionsAPI extends EndpointGroup {
   }
 
   update(definitionId: number, payload: Record<string, unknown>) {
-    return this.patch<Record<string, unknown>>(
+    return this.requestPatch<Record<string, unknown>>(
       `/api/admin/sync-source-definitions/${definitionId}`,
       { json: payload }
     )
   }
 
   async delete(definitionId: number) {
-    await super.delete(`/api/admin/sync-source-definitions/${definitionId}`)
+    await super.requestDelete(`/api/admin/sync-source-definitions/${definitionId}`)
   }
 }

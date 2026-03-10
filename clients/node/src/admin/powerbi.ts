@@ -2,23 +2,23 @@ import { EndpointGroup } from '../base'
 
 export class AdminPowerBIAPI extends EndpointGroup {
   getWorkspace(workspaceId: string) {
-    return this.get<Record<string, unknown>>(`/api/admin/powerbi/workspaces/${workspaceId}`)
+    return this.requestGet<Record<string, unknown>>(`/api/admin/powerbi/workspaces/${workspaceId}`)
   }
 
   listReports(workspaceId: string) {
-    return this.get<Array<Record<string, unknown>>>(
+    return this.requestGet<Array<Record<string, unknown>>>(
       `/api/admin/powerbi/workspaces/${workspaceId}/reports`
     )
   }
 
   listReportPages(workspaceId: string, reportId: string) {
-    return this.get<Array<Record<string, unknown>>>(
+    return this.requestGet<Array<Record<string, unknown>>>(
       `/api/admin/powerbi/workspaces/${workspaceId}/reports/${reportId}/pages`
     )
   }
 
   listDatasets(workspaceId: string) {
-    return this.get<Array<Record<string, unknown>>>(
+    return this.requestGet<Array<Record<string, unknown>>>(
       `/api/admin/powerbi/workspaces/${workspaceId}/datasets`
     )
   }
@@ -33,7 +33,7 @@ export class AdminPowerBIAPI extends EndpointGroup {
       allow_save_as?: boolean
     } = {}
   ) {
-    return this.post<Record<string, unknown>>(
+    return this.requestPost<Record<string, unknown>>(
       `/api/admin/powerbi/workspaces/${workspaceId}/reports/${reportId}/embed-token`,
       {
         json: {

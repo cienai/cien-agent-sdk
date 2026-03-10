@@ -2,7 +2,7 @@ import { EndpointGroup } from '../base'
 
 export class AdminCrmAPI extends EndpointGroup {
   describe(payload: { coid: string; table: string; column_names_only?: boolean }) {
-    return this.post<unknown>('/api/admin/crm/describe', {
+    return this.requestPost<unknown>('/api/admin/crm/describe', {
       json: {
         coid: payload.coid,
         table: payload.table,
@@ -12,6 +12,6 @@ export class AdminCrmAPI extends EndpointGroup {
   }
 
   query(payload: { coid: string; table: string; query: string; limit?: number }) {
-    return this.post<unknown>('/api/admin/crm/query', { json: payload })
+    return this.requestPost<unknown>('/api/admin/crm/query', { json: payload })
   }
 }

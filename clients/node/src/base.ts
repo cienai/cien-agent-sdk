@@ -8,23 +8,29 @@ export class EndpointGroup {
     this.transport = transport
   }
 
-  protected get<T = unknown>(path: string, options?: Omit<RequestOptions, 'json'>): Promise<T> {
+  protected requestGet<T = unknown>(
+    path: string,
+    options?: Omit<RequestOptions, 'json'>
+  ): Promise<T> {
     return this.transport.request<T>('GET', path, options)
   }
 
-  protected post<T = unknown>(path: string, options?: RequestOptions): Promise<T> {
+  protected requestPost<T = unknown>(path: string, options?: RequestOptions): Promise<T> {
     return this.transport.request<T>('POST', path, options)
   }
 
-  protected put<T = unknown>(path: string, options?: RequestOptions): Promise<T> {
+  protected requestPut<T = unknown>(path: string, options?: RequestOptions): Promise<T> {
     return this.transport.request<T>('PUT', path, options)
   }
 
-  protected patch<T = unknown>(path: string, options?: RequestOptions): Promise<T> {
+  protected requestPatch<T = unknown>(path: string, options?: RequestOptions): Promise<T> {
     return this.transport.request<T>('PATCH', path, options)
   }
 
-  protected delete<T = unknown>(path: string, options?: Omit<RequestOptions, 'json'>): Promise<T> {
+  protected requestDelete<T = unknown>(
+    path: string,
+    options?: Omit<RequestOptions, 'json'>
+  ): Promise<T> {
     return this.transport.request<T>('DELETE', path, options)
   }
 }

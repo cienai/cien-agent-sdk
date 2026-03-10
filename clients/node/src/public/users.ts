@@ -3,7 +3,7 @@ import { dropNullish } from '../utils'
 
 export class PublicUsersAPI extends EndpointGroup {
   issueToken(payload: { username: string; password: string }) {
-    return this.post<Record<string, unknown>>('/api/users/token', { json: payload })
+    return this.requestPost<Record<string, unknown>>('/api/users/token', { json: payload })
   }
 
   upsert(payload: {
@@ -17,25 +17,25 @@ export class PublicUsersAPI extends EndpointGroup {
     clerk_raw?: Record<string, unknown>
     partner_id?: number
   }) {
-    return this.post<Record<string, unknown>>('/api/users/upsert', {
+    return this.requestPost<Record<string, unknown>>('/api/users/upsert', {
       json: dropNullish({ ...payload, clerk_raw: payload.clerk_raw ?? {} }),
     })
   }
 
   invite(payload: { identifier: string; partner_id?: number }) {
-    return this.post<Record<string, unknown>>('/api/users/invite', {
+    return this.requestPost<Record<string, unknown>>('/api/users/invite', {
       json: dropNullish(payload),
     })
   }
 
   setCompanyPermission(payload: { email: string; coid: string; permissions: string }) {
-    return this.post<Record<string, unknown>>('/api/users/company-permissions/set', {
+    return this.requestPost<Record<string, unknown>>('/api/users/company-permissions/set', {
       json: payload,
     })
   }
 
   removeCompanyPermission(payload: { email: string; coid: string }) {
-    return this.post<Record<string, unknown>>('/api/users/company-permissions/remove', {
+    return this.requestPost<Record<string, unknown>>('/api/users/company-permissions/remove', {
       json: payload,
     })
   }
@@ -49,7 +49,7 @@ export class PublicUsersAPI extends EndpointGroup {
     limit?: number
     offset?: number
   } = {}) {
-    return this.get<Array<Record<string, unknown>>>('/api/users', {
+    return this.requestGet<Array<Record<string, unknown>>>('/api/users', {
       params: dropNullish({
         include_deleted: false,
         only_active: true,
@@ -66,12 +66,12 @@ export class PublicUsersAPI extends EndpointGroup {
     email?: string
     include_deleted?: boolean
   }) {
-    return this.get<Record<string, unknown>>('/api/users/lookup', {
+    return this.requestGet<Record<string, unknown>>('/api/users/lookup', {
       params: dropNullish({ include_deleted: false, ...params }),
     })
   }
 
   whoAmI() {
-    return this.get<Record<string, unknown>>('/whoami')
+    return this.requestGet<Record<string, unknown>>('/whoami')
   }
 }
