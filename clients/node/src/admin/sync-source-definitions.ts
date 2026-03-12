@@ -1,5 +1,5 @@
-import { EndpointGroup } from '../base'
-import { dropNullish } from '../utils'
+import { EndpointGroup } from '../base.js'
+import { dropNullish } from '../utils.js'
 
 export class AdminSyncSourceDefinitionsAPI extends EndpointGroup {
   list(params: { is_active?: boolean } = {}) {

@@ -1,5 +1,5 @@
-import type { RequestOptions } from './types'
-import { HTTPTransport } from './transport'
+import type { RequestOptions } from './types.js'
+import { HTTPTransport } from './transport.js'
 
 export class EndpointGroup {
   protected readonly transport: HTTPTransport
