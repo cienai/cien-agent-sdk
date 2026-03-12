@@ -1,4 +1,4 @@
-import type { QueryParams, RequestHeaders } from './types'
+import type { QueryParams, RequestHeaders } from './types.js'
 
 export function dropNullish<T extends Record<string, unknown>>(data: T): Partial<T> {
   return Object.fromEntries(

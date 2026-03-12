@@ -1,7 +1,7 @@
-import { AdminClient } from './admin/index'
-import { PublicClient } from './public/index'
-import { HTTPTransport } from './transport'
-import type { TokenProvider, TransportOptions } from './types'
+import { AdminClient } from './admin/index.js'
+import { PublicClient } from './public/index.js'
+import { HTTPTransport } from './transport.js'
+import type { TokenProvider, TransportOptions } from './types.js'
 
 export class CienClient {
   readonly transport: HTTPTransport

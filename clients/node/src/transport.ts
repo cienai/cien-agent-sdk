@@ -1,12 +1,12 @@
-import { APIError, RequestError } from './errors'
-import { hydrateJsonValue } from './hydration'
+import { APIError, RequestError } from './errors.js'
+import { hydrateJsonValue } from './hydration.js'
 import type {
   RequestOptions,
   TokenProvider,
   TransportOptions,
   FetchLike,
-} from './types'
-import { buildUrl, resolveHeaders } from './utils'
+} from './types.js'
+import { buildUrl, resolveHeaders } from './utils.js'
 
 function isAbortError(error: unknown): boolean {
   return error instanceof Error && error.name === 'AbortError'

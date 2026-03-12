@@ -1,8 +1,8 @@
-export { AdminClient } from './admin/index'
-export { CienClient, CienAgentClient } from './client'
-export { APIError, CienAgentSDKError, RequestError } from './errors'
-export { PublicClient } from './public/index'
-export { HTTPTransport } from './transport'
+export { AdminClient } from './admin/index.js'
+export { CienClient, CienAgentClient } from './client.js'
+export { APIError, CienAgentSDKError, RequestError } from './errors.js'
+export { PublicClient } from './public/index.js'
+export { HTTPTransport } from './transport.js'
 export type {
   FetchLike,
   MaybePromise,
@@ -11,4 +11,4 @@ export type {
   RequestOptions,
   TokenProvider,
   TransportOptions,
-} from './types'
+} from './types.js'
