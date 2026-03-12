@@ -13,6 +13,7 @@ def test_client_exposes_public_and_admin_groups(base_url: str, clerk_api_token: 
     assert client.admin is not None
     assert hasattr(client.public, "users")
     assert hasattr(client.admin, "partners")
+    assert hasattr(client.admin, "sync_mappings")
 
 
 def test_client_set_token_delegates_to_transport(base_url: str, clerk_api_token: str) -> None:

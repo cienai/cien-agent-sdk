@@ -73,6 +73,31 @@ Methods are available from `client.admin`.
 - `delete(sync_id)`
   Deletes a sync record.
 
+## `sync_mappings`
+
+- `get_mapping_type(sync_id)`
+  Gets the current mapping type for one sync.
+- `set_mapping_type(sync_id, mapping_type)`
+  Updates the mapping type for one sync.
+- `get_crm_entities(sync_id)`
+  Lists CRM entities available for the sync's mapping type.
+- `get_cien_entity(sync_id, crm_entity)`
+  Resolves the Cien entity for one CRM entity.
+- `get_entity_overrides(sync_id)`
+  Gets entity overrides stored on the sync record.
+- `set_entity_overrides(sync_id, entity_overrides)`
+  Updates entity overrides stored on the sync record.
+- `get_default_mapping(sync_id, crm_entity)`
+  Gets the default mapping for one CRM entity.
+- `set_default_mapping(sync_id)`
+  Calls the sync-scoped default mapping write endpoint. The current AgentOS endpoint responds with `501 Not Implemented`.
+- `get_mappings(sync_id)`
+  Gets all saved mappings for one sync.
+- `get_mapping(sync_id, crm_entity)`
+  Gets saved mappings for one CRM entity.
+- `set_mapping(sync_id, crm_entity, mappings)`
+  Updates saved mappings for one CRM entity.
+
 ## `sync_source_definitions`
 
 - `list(is_active=None)`

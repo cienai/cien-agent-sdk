@@ -51,6 +51,7 @@ import { APIError, RequestError } from '@cien/cien-agent-sdk'
 
 try {
   await client.admin.sync.list({ coid: 'example-coid' })
+  await client.admin.syncMappings.getMappings(123)
 } catch (error) {
   if (error instanceof APIError) {
     console.error(error.statusCode, error.responseBody)
