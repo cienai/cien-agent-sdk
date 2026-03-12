@@ -7,6 +7,7 @@ from typing import Any
 import requests
 
 from .errors import APIError, RequestError
+from .hydration import hydrate_json_value
 
 
 class HTTPTransport:
@@ -82,6 +83,6 @@ class HTTPTransport:
 
         content_type = response.headers.get("content-type", "")
         if "application/json" in content_type:
-            return response.json()
+            return hydrate_json_value(response.json())
 
         return response.text

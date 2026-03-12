@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from datetime import date, datetime, timezone
 from unittest.mock import Mock
 
 import pytest
@@ -140,3 +141,25 @@ def test_set_token_updates_auth_header_for_next_request(base_url: str, clerk_api
 
     headers = session.request.call_args.kwargs["headers"]
     assert headers["Authorization"] == f"Bearer {clerk_api_token}"
+
+
+def test_request_hydrates_iso_datetime_and_date_values(base_url: str) -> None:
+    session = Mock()
+    session.request.return_value = _response(
+        status_code=200,
+        content=b'{"created_at":"2026-03-12T10:11:12Z","effective_date":"2026-03-01","nested":{"items":["2026-03-12T10:11:12+00:00","plain"]}}',
+        headers={"content-type": "application/json"},
+        json_value={
+            "created_at": "2026-03-12T10:11:12Z",
+            "effective_date": "2026-03-01",
+            "nested": {"items": ["2026-03-12T10:11:12+00:00", "plain"]},
+        },
+    )
+    transport = HTTPTransport(base_url=base_url, session=session)
+
+    result = transport.request("GET", "/v1/types")
+
+    assert result["created_at"] == datetime(2026, 3, 12, 10, 11, 12, tzinfo=timezone.utc)
+    assert result["effective_date"] == date(2026, 3, 1)
+    assert result["nested"]["items"][0] == datetime(2026, 3, 12, 10, 11, 12, tzinfo=timezone.utc)
+    assert result["nested"]["items"][1] == "plain"

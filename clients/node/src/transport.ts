@@ -1,4 +1,5 @@
 import { APIError, RequestError } from './errors'
+import { hydrateJsonValue } from './hydration'
 import type {
   RequestOptions,
   TokenProvider,
@@ -132,7 +133,7 @@ export class HTTPTransport {
         return (text ? text : undefined) as T
       }
       if (contentType.includes('application/json')) {
-        return (await response.json()) as T
+        return hydrateJsonValue((await response.json()) as T)
       }
       return (await response.text()) as T
     } catch (error) {
