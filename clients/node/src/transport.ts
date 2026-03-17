@@ -25,6 +25,15 @@ function extractMessage(payload: unknown, fallback: string): string {
   return fallback
 }
 
+function isTokenExpiredPayload(payload: unknown): boolean {
+  const msg = extractMessage(payload, '').toLowerCase()
+  return (
+    msg.includes('token_expired') ||
+    msg.includes('tokenverificationerrorreason.token_expired') ||
+    (msg.includes('expired') && msg.includes('token'))
+  )
+}
+
 function createTimeoutSignal(timeout: number | undefined, externalSignal?: AbortSignal) {
   if (!timeout || timeout <= 0) {
     return { signal: externalSignal, cleanup: () => {} }
@@ -116,6 +125,52 @@ export class HTTPTransport {
         } catch {
           payload = await response.text()
         }
+
+        // If this is a 401 and it looks like the token expired, and we
+        // have a token provider function, attempt to refresh once and retry.
+        const tokenIsFunction = typeof this.token === 'function'
+        if (response.status === 401 && tokenIsFunction && isTokenExpiredPayload(payload)) {
+          try {
+            const refreshed = await (this.token as () => Promise<string | null | undefined>)()
+            if (refreshed) {
+              // update Authorization header and retry once
+              requestHeaders.set('Authorization', `Bearer ${refreshed}`)
+              const retryResp = await this.fetchImpl(url, {
+                method,
+                headers: requestHeaders,
+                body,
+                signal,
+              })
+              if (retryResp.status >= 400) {
+                let retryPayload: unknown
+                try {
+                  retryPayload = await retryResp.json()
+                } catch {
+                  retryPayload = await retryResp.text()
+                }
+                throw new APIError(
+                  retryResp.status,
+                  extractMessage(retryPayload, retryResp.statusText || 'Request failed'),
+                  retryPayload
+                )
+              }
+              // successful retry
+              if (retryResp.status === 204) return undefined as T
+              const retryContentType = retryResp.headers.get('content-type') || ''
+              if (!retryContentType) {
+                const text = await retryResp.text()
+                return (text ? text : undefined) as T
+              }
+              if (retryContentType.includes('application/json')) {
+                return hydrateJsonValue((await retryResp.json()) as T)
+              }
+              return (await retryResp.text()) as T
+            }
+          } catch {
+            // fallthrough to raising original APIError below
+          }
+        }
+
         throw new APIError(
           response.status,
           extractMessage(payload, response.statusText || 'Request failed'),
