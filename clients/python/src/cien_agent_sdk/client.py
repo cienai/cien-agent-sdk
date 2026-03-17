@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Callable, Optional, Union
+
 import requests
 
 from .admin import AdminClient
@@ -22,6 +24,7 @@ class CienClient:
         *,
         base_url: str,
         token: str | None = None,
+        token_provider: Callable[[], Optional[str]] | None = None,
         timeout: float = 30.0,
         default_headers: dict[str, str] | None = None,
         session: requests.Session | None = None,
@@ -30,6 +33,7 @@ class CienClient:
         self.transport = HTTPTransport(
             base_url=base_url,
             token=token,
+            token_provider=token_provider,
             timeout=timeout,
             default_headers=default_headers,
             session=session,
@@ -37,8 +41,8 @@ class CienClient:
         self.public = PublicClient(self.transport)
         self.admin = AdminClient(self.transport)
 
-    def set_token(self, token: str | None) -> None:
-        """Update the bearer token used by all API groups."""
+    def set_token(self, token: Union[str, None, Callable[[], Optional[str]]]) -> None:
+        """Update the bearer token or token provider used by all API groups."""
         self.transport.set_token(token)
 
 

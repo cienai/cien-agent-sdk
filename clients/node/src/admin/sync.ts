@@ -60,10 +60,10 @@ export class AdminSyncAPI extends EndpointGroup {
     await super.requestDelete(`/api/admin/sync/${syncId}`)
   }
 
-  reset(payload: { coid: string; crm_entity: string; reset_delta?: boolean }) {
+  reset(payload: { sync_id: number; crm_entity: string; reset_delta?: boolean }) {
     return this.requestPost<ResetSyncResponse>('/api/admin/sync/reset', {
       json: {
-        coid: payload.coid,
+        sync_id: payload.sync_id,
         crm_entity: payload.crm_entity,
         reset_delta: payload.reset_delta ?? true,
       },

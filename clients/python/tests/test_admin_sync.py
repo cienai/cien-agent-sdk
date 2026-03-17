@@ -74,10 +74,10 @@ def test_reset_posts_expected_payload(base_url: str) -> None:
     )
     api = AdminSyncAPI(HTTPTransport(base_url=base_url, session=session))
 
-    result = api.reset(coid="co-1", crm_entity="Account", reset_delta=False)
+    result = api.reset(sync_id=123, crm_entity="Account", reset_delta=False)
 
     assert result == {"message": "success"}
     called_url = session.request.call_args.kwargs["url"]
     payload = session.request.call_args.kwargs["json"]
     assert called_url.endswith("/api/admin/sync/reset")
-    assert payload == {"coid": "co-1", "crm_entity": "Account", "reset_delta": False}
+    assert payload == {"sync_id": 123, "crm_entity": "Account", "reset_delta": False}
