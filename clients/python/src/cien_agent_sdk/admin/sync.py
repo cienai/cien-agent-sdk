@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import Any
+from ..types import ResetSyncResponse
 
 from ..base import EndpointGroup
 from ..errors import APIError
@@ -58,7 +59,7 @@ class AdminSyncAPI(EndpointGroup):
         """Delete a sync record by ID."""
         self._delete(f"/api/admin/sync/{sync_id}")
 
-    def reset(self, *, coid: str, crm_entity: str, reset_delta: bool = True) -> dict[str, Any]:
+    def reset(self, *, coid: str, crm_entity: str, reset_delta: bool = True) -> ResetSyncResponse:
         """Reset sync state for one CRM entity."""
         return self._post(
             "/api/admin/sync/reset",
