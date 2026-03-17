@@ -2,6 +2,15 @@ import { APIError } from '../errors.js'
 import { EndpointGroup } from '../base.js'
 import { dropNullish } from '../utils.js'
 
+export interface ResetSyncResponse {
+  message: string
+  coid: string
+  entity: string
+  status_cleared: boolean
+  deleted_files: string[]
+  errors: string[]
+}
+
 export class AdminSyncAPI extends EndpointGroup {
   list(params: {
     coid?: string
@@ -52,7 +61,7 @@ export class AdminSyncAPI extends EndpointGroup {
   }
 
   reset(payload: { coid: string; crm_entity: string; reset_delta?: boolean }) {
-    return this.requestPost<Record<string, unknown>>('/api/admin/sync/reset', {
+    return this.requestPost<ResetSyncResponse>('/api/admin/sync/reset', {
       json: {
         coid: payload.coid,
         crm_entity: payload.crm_entity,
