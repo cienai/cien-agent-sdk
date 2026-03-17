@@ -21,6 +21,12 @@ export class AdminSyncMappingsAPI extends EndpointGroup {
     })
   }
 
+  getCienEntities(syncId: number) {
+    return this.requestGet<Record<string, Record<string, string | null>>>(
+      `/api/admin/sync-mappings/${syncId}/cien-entities`
+    )
+  }
+
   getEntityOverrides(syncId: number) {
     return this.requestGet<Record<string, unknown>>(`/api/admin/sync-mappings/${syncId}/entity-overrides`)
   }
