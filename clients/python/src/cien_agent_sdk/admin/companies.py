@@ -12,26 +12,20 @@ class AdminCompaniesAPI(EndpointGroup):
     def list(
         self,
         *,
-        partner_id: str | None = None,
-        clerk_org_id: str | None = None,
         selected_columns: list[str] | None = None,
         filters: str | None = None,
         order_by: str | None = None,
-        limit: int | None = None,
-        natural_query: str | None = None,
+        limit: int | None = None
     ) -> list[dict[str, Any]]:
         """List companies with admin-only filters for partner and org scope."""
         return self._get(
             "/api/admin/companies",
             params=drop_none(
                 {
-                    "partner_id": partner_id,
-                    "clerk_org_id": clerk_org_id,
                     "selected_columns": selected_columns,
                     "filters": filters,
                     "order_by": order_by,
-                    "limit": limit,
-                    "natural_query": natural_query,
+                    "limit": limit
                 }
             ),
         )
@@ -39,24 +33,18 @@ class AdminCompaniesAPI(EndpointGroup):
     def search(
         self,
         *,
-        partner_id: str | None = None,
-        clerk_org_id: str | None = None,
         selected_columns: list[str] | None = None,
         filters: dict[str, Any] | None = None,
         order_by: str | None = None,
-        limit: int | None = None,
-        natural_query: str | None = None,
+        limit: int | None = None
     ) -> list[dict[str, Any]]:
         """Search companies with admin-only filters using a JSON payload."""
         payload = drop_none(
             {
-                "partner_id": partner_id,
-                "clerk_org_id": clerk_org_id,
                 "selected_columns": selected_columns,
                 "filters": filters,
                 "order_by": order_by,
-                "limit": limit,
-                "natural_query": natural_query,
+                "limit": limit
             }
         )
         return self._post("/api/admin/companies/search", json=payload)

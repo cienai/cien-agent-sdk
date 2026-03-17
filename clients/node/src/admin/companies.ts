@@ -3,13 +3,10 @@ import { dropNullish } from '../utils.js'
 
 export class AdminCompaniesAPI extends EndpointGroup {
   list(params: {
-    partner_id?: string
-    clerk_org_id?: string
     selected_columns?: string[]
     filters?: string
     order_by?: string
     limit?: number
-    natural_query?: string
   } = {}) {
     return super.requestGet<Array<Record<string, unknown>>>('/api/admin/companies', {
       params: dropNullish(params),
@@ -17,13 +14,10 @@ export class AdminCompaniesAPI extends EndpointGroup {
   }
 
   search(payload: {
-    partner_id?: string
-    clerk_org_id?: string
     selected_columns?: string[]
     filters?: Record<string, unknown>
     order_by?: string
     limit?: number
-    natural_query?: string
   } = {}) {
     return this.requestPost<Array<Record<string, unknown>>>('/api/admin/companies/search', {
       json: dropNullish(payload),
