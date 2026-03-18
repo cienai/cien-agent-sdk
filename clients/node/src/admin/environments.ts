@@ -2,17 +2,18 @@ import { EndpointGroup } from '../base.js'
 import { dropNullish } from '../utils.js'
 
 export class AdminEnvironmentsAPI extends EndpointGroup {
-  list(params: { coid: string; include_sync?: boolean }) {
+  list(params: { coid: string; include_sync?: boolean, include_config?: boolean }) {
     return super.requestGet<Record<string, unknown>>('/api/admin/environments', {
-      params: { coid: params.coid, include_sync: params.include_sync ?? false },
+      params: { coid: params.coid, include_sync: params.include_sync ?? false, include_config: params.include_config ?? false },
     })
   }
 
-  get(coid: string, params: { environment?: string; include_sync?: boolean } = {}) {
+  get(coid: string, params: { environment?: string; include_sync?: boolean, include_config?: boolean } = {}) {
     return super.requestGet<Record<string, unknown>>(`/api/admin/environments/${coid}`, {
       params: {
         environment: params.environment ?? 'staging',
         include_sync: params.include_sync ?? false,
+        include_config: params.include_config ?? false,
       },
     })
   }

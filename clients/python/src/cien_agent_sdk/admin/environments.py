@@ -9,15 +9,15 @@ from ..utils import drop_none
 class AdminEnvironmentsAPI(EndpointGroup):
     """/api/admin/environments endpoints."""
 
-    def list(self, *, coid: str, include_sync: bool = False) -> dict[str, Any]:
+    def list(self, *, coid: str, include_sync: bool = False, include_config: bool = False) -> dict[str, Any]:
         """List environment records for a company."""
-        return self._get("/api/admin/environments", params={"coid": coid, "include_sync": include_sync})
+        return self._get("/api/admin/environments", params={"coid": coid, "include_sync": include_sync, "include_config": include_config})
 
-    def get(self, coid: str, *, environment: str = "staging", include_sync: bool = False) -> dict[str, Any]:
+    def get(self, coid: str, *, environment: str = "staging", include_sync: bool = False, include_config: bool = False) -> dict[str, Any]:
         """Get one company environment record (for example staging or prod)."""
         return self._get(
             f"/api/admin/environments/{coid}",
-            params={"environment": environment, "include_sync": include_sync},
+            params={"environment": environment, "include_sync": include_sync, "include_config": include_config},
         )
 
     def create(self, *, data: dict[str, Any], environment: str = "staging") -> dict[str, Any]:
@@ -53,6 +53,7 @@ class AdminEnvironmentsAPI(EndpointGroup):
         source_environment: str = "prod",
         destination_environment: str = "staging",
         include_sync: bool = True,
+        include_config: bool = True,
         overwrite_sync: bool = True,
     ) -> dict[str, Any]:
         """Copy environment data from one environment to another for a company."""
@@ -63,6 +64,7 @@ class AdminEnvironmentsAPI(EndpointGroup):
                     "source_environment": source_environment,
                     "destination_environment": destination_environment,
                     "include_sync": include_sync,
+                    "include_config": include_config,
                     "overwrite_sync": overwrite_sync,
                 }
             ),
