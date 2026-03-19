@@ -1,8 +1,8 @@
 {
   "generated_at_utc": "2026-03-09T09:53:42.095881+00:00",
   "agent_os_path": "/home/ben/cien-agent/cien-agent-os",
-  "endpoint_count": 99,
-  "sdk_included_count": 76,
+  "endpoint_count": 102,
+  "sdk_included_count": 79,
   "endpoints": [
     {
       "method": "GET",
@@ -181,6 +181,36 @@
       "router_prefix": "/api/admin/environments",
       "source_file": "api/routes/admin/environments.py",
       "source_line": 435,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/admin/jobs/{coid}",
+      "router_name": "router",
+      "router_prefix": "/api/admin/jobs",
+      "source_file": "api/routes/admin/jobs.py",
+      "source_line": 399,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "POST",
+      "path": "/api/admin/jobs/{coid}/{dag_run_id}/cancel",
+      "router_name": "router",
+      "router_prefix": "/api/admin/jobs",
+      "source_file": "api/routes/admin/jobs.py",
+      "source_line": 413,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "POST",
+      "path": "/api/admin/jobs/run",
+      "router_name": "router",
+      "router_prefix": "/api/admin/jobs",
+      "source_file": "api/routes/admin/jobs.py",
+      "source_line": 346,
       "included_in_sdk": true,
       "reason": null
     },

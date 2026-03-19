@@ -4,6 +4,7 @@ from ..transport import HTTPTransport
 from .companies import AdminCompaniesAPI
 from .crm import AdminCrmAPI
 from .environments import AdminEnvironmentsAPI
+from .jobs import AdminJobsAPI
 from .mappings import AdminMappingsAPI
 from .partners import AdminPartnersAPI
 from .powerbi import AdminPowerBIAPI
@@ -19,6 +20,7 @@ class AdminClient:
         self.companies = AdminCompaniesAPI(transport)
         self.crm = AdminCrmAPI(transport)
         self.environments = AdminEnvironmentsAPI(transport)
+        self.jobs = AdminJobsAPI(transport)
         self.mappings = AdminMappingsAPI(transport)
         self.partners = AdminPartnersAPI(transport)
         self.powerbi = AdminPowerBIAPI(transport)

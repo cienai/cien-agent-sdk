@@ -2,6 +2,7 @@ import { HTTPTransport } from '../transport.js'
 import { AdminCompaniesAPI } from './companies.js'
 import { AdminCrmAPI } from './crm.js'
 import { AdminEnvironmentsAPI } from './environments.js'
+import { AdminJobsAPI } from './jobs.js'
 import { AdminMappingsAPI } from './mappings.js'
 import { AdminPartnersAPI } from './partners.js'
 import { AdminPowerBIAPI } from './powerbi.js'
@@ -14,6 +15,7 @@ export class AdminClient {
   readonly companies: AdminCompaniesAPI
   readonly crm: AdminCrmAPI
   readonly environments: AdminEnvironmentsAPI
+  readonly jobs: AdminJobsAPI
   readonly mappings: AdminMappingsAPI
   readonly partners: AdminPartnersAPI
   readonly powerbi: AdminPowerBIAPI
@@ -29,6 +31,7 @@ export class AdminClient {
     this.companies = new AdminCompaniesAPI(transport)
     this.crm = new AdminCrmAPI(transport)
     this.environments = new AdminEnvironmentsAPI(transport)
+    this.jobs = new AdminJobsAPI(transport)
     this.mappings = new AdminMappingsAPI(transport)
     this.partners = new AdminPartnersAPI(transport)
     this.powerbi = new AdminPowerBIAPI(transport)

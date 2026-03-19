@@ -32,6 +32,15 @@ Methods are available from `client.admin`.
 - `copy(coid, source_environment="prod", destination_environment="staging", include_sync=True, overwrite_sync=True)`
   Copies environment data from source to destination.
 
+## `jobs`
+
+- `run(coid, job_type, priority=False)`
+  Triggers an Airflow-backed job for one company.
+- `list(coid, limit=None)`
+  Lists recent jobs for one company.
+- `cancel(coid, dag_run_id)`
+  Requests cancellation for one dag run belonging to one company.
+
 ## `partners`
 
 - `list(include_deleted=False, include_inactive=True, show_all=False)`
