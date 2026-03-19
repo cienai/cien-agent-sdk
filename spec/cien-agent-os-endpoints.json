@@ -1,8 +1,8 @@
 {
   "generated_at_utc": "2026-03-09T09:53:42.095881+00:00",
   "agent_os_path": "/home/ben/cien-agent/cien-agent-os",
-  "endpoint_count": 97,
-  "sdk_included_count": 74,
+  "endpoint_count": 99,
+  "sdk_included_count": 76,
   "endpoints": [
     {
       "method": "GET",
@@ -101,6 +101,26 @@
       "router_prefix": "/api/admin/crm",
       "source_file": "api/routes/admin/crm.py",
       "source_line": 65,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "POST",
+      "path": "/api/admin/sync_live_query/describe",
+      "router_name": "router",
+      "router_prefix": "/api/admin/sync_live_query",
+      "source_file": "api/routes/admin/sync_live_query.py",
+      "source_line": 33,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "POST",
+      "path": "/api/admin/sync_live_query/query",
+      "router_name": "router",
+      "router_prefix": "/api/admin/sync_live_query",
+      "source_file": "api/routes/admin/sync_live_query.py",
+      "source_line": 56,
       "included_in_sdk": true,
       "reason": null
     },
