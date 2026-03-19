@@ -6,6 +6,7 @@ import { AdminMappingsAPI } from './mappings.js'
 import { AdminPartnersAPI } from './partners.js'
 import { AdminPowerBIAPI } from './powerbi.js'
 import { AdminSyncAPI } from './sync.js'
+import { AdminSyncLiveQueryAPI } from './sync-live-query.js'
 import { AdminSyncMappingsAPI } from './sync-mappings.js'
 import { AdminSyncSourceDefinitionsAPI } from './sync-source-definitions.js'
 
@@ -17,6 +18,8 @@ export class AdminClient {
   readonly partners: AdminPartnersAPI
   readonly powerbi: AdminPowerBIAPI
   readonly sync: AdminSyncAPI
+  readonly syncLiveQuery: AdminSyncLiveQueryAPI
+  readonly sync_live_query: AdminSyncLiveQueryAPI
   readonly syncMappings: AdminSyncMappingsAPI
   readonly sync_mappings: AdminSyncMappingsAPI
   readonly syncSourceDefinitions: AdminSyncSourceDefinitionsAPI
@@ -30,6 +33,8 @@ export class AdminClient {
     this.partners = new AdminPartnersAPI(transport)
     this.powerbi = new AdminPowerBIAPI(transport)
     this.sync = new AdminSyncAPI(transport)
+    this.syncLiveQuery = new AdminSyncLiveQueryAPI(transport)
+    this.sync_live_query = this.syncLiveQuery
     this.syncMappings = new AdminSyncMappingsAPI(transport)
     this.sync_mappings = this.syncMappings
     this.syncSourceDefinitions = new AdminSyncSourceDefinitionsAPI(transport)
