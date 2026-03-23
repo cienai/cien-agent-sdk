@@ -26,4 +26,32 @@ export class AdminJobDataAPI extends EndpointGroup {
       }),
     })
   }
+
+  explore(payload: {
+    coid: string
+    prefix?: string
+    limit?: number
+    recursive?: boolean
+  }) {
+    return super.requestGet<Record<string, unknown>>(`/api/admin/job-data/${payload.coid}/explore`, {
+      params: dropNullish({
+        prefix: payload.prefix,
+        limit: payload.limit,
+        recursive: payload.recursive,
+      }),
+    })
+  }
+
+  sizes(payload: {
+    coid: string
+    prefix?: string
+    include_container_total?: boolean
+  }) {
+    return super.requestGet<Record<string, unknown>>(`/api/admin/job-data/${payload.coid}/sizes`, {
+      params: dropNullish({
+        prefix: payload.prefix,
+        include_container_total: payload.include_container_total,
+      }),
+    })
+  }
 }

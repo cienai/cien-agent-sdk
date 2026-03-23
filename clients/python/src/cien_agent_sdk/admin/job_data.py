@@ -30,3 +30,41 @@ class AdminJobDataAPI(EndpointGroup):
             f"/api/admin/job-data/{coid}/refresh",
             json=drop_none({"region": region}),
         )
+
+    def explore(
+        self,
+        *,
+        coid: str,
+        prefix: str | None = None,
+        limit: int | None = None,
+        recursive: bool | None = None,
+    ) -> dict[str, Any]:
+        """List job data paths for one company."""
+        return self._get(
+            f"/api/admin/job-data/{coid}/explore",
+            params=drop_none(
+                {
+                    "prefix": prefix,
+                    "limit": limit,
+                    "recursive": recursive,
+                }
+            ),
+        )
+
+    def sizes(
+        self,
+        *,
+        coid: str,
+        prefix: str | None = None,
+        include_container_total: bool | None = None,
+    ) -> dict[str, Any]:
+        """Get aggregated immediate-child sizes plus optional container total."""
+        return self._get(
+            f"/api/admin/job-data/{coid}/sizes",
+            params=drop_none(
+                {
+                    "prefix": prefix,
+                    "include_container_total": include_container_total,
+                }
+            ),
+        )
