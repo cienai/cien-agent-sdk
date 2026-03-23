@@ -41,6 +41,17 @@ Methods are available from `client.admin`.
 - `cancel(coid, dag_run_id)`
   Requests cancellation for one dag run belonging to one company.
 
+## `job_data`
+
+- `get(coid)`
+  Gets the current `job_data_conn` config for one company.
+- `create(coid)`
+  Provisions a new `job_data_conn` using the company's region.
+- `save(coid, value, config_type=None)`
+  Persists `job_data_conn` directly.
+- `refresh(coid, region)`
+  Refreshes credentials or recreates the container for one company.
+
 ## `partners`
 
 - `list(include_deleted=False, include_inactive=True, show_all=False)`

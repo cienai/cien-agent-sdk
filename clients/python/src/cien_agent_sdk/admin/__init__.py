@@ -5,6 +5,7 @@ from .companies import AdminCompaniesAPI
 from .crm import AdminCrmAPI
 from .environments import AdminEnvironmentsAPI
 from .jobs import AdminJobsAPI
+from .job_data import AdminJobDataAPI
 from .mappings import AdminMappingsAPI
 from .partners import AdminPartnersAPI
 from .powerbi import AdminPowerBIAPI
@@ -21,6 +22,7 @@ class AdminClient:
         self.crm = AdminCrmAPI(transport)
         self.environments = AdminEnvironmentsAPI(transport)
         self.jobs = AdminJobsAPI(transport)
+        self.job_data = AdminJobDataAPI(transport)
         self.mappings = AdminMappingsAPI(transport)
         self.partners = AdminPartnersAPI(transport)
         self.powerbi = AdminPowerBIAPI(transport)
