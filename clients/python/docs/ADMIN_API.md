@@ -8,6 +8,8 @@ Methods are available from `client.admin`.
   Lists companies with admin-scoped filters.
 - `search(partner_id=None, clerk_org_id=None, selected_columns=None, filters=None, order_by=None, limit=None, natural_query=None)`
   Searches companies using a JSON payload.
+- `create(data, selected_columns=None)`
+  Creates one company. `data` must include `partner_id`, `name`, and `region` (`"us"` or `"eu"`).
 - `get(coid, selected_columns=None)`
   Gets one company by COID.
 - `lookup(company_id=None, company_name=None, selected_columns=None)`

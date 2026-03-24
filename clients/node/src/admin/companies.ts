@@ -1,6 +1,17 @@
 import { EndpointGroup } from '../base.js'
 import { dropNullish } from '../utils.js'
 
+export type CompanyCreateData = {
+  partner_id: string
+  name: string
+  region: 'us' | 'eu'
+}
+
+export type CompanyCreatePayload = {
+  data: CompanyCreateData
+  selected_columns?: string[]
+}
+
 export class AdminCompaniesAPI extends EndpointGroup {
   list(params: {
     selected_columns?: string[]
@@ -24,7 +35,7 @@ export class AdminCompaniesAPI extends EndpointGroup {
     })
   }
 
-  create(payload: { data: Record<string, unknown>; selected_columns?: string[] }) {
+  create(payload: CompanyCreatePayload) {
     return this.requestPost<Record<string, unknown>>('/api/admin/companies', { json: payload })
   }
 
