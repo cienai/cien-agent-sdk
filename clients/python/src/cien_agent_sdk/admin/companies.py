@@ -1,9 +1,17 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Literal
+
+from pydantic import BaseModel
 
 from ..base import EndpointGroup
 from ..utils import drop_none
+
+
+class CompanyCreateData(BaseModel):
+    partner_id: str
+    name: str
+    region: Literal["us", "eu"]
 
 
 class AdminCompaniesAPI(EndpointGroup):
@@ -52,13 +60,13 @@ class AdminCompaniesAPI(EndpointGroup):
     def create(
         self,
         *,
-        data: dict[str, Any],
+        data: CompanyCreateData,
         selected_columns: list[str] | None = None,
     ) -> dict[str, Any]:
         """Create one company through the admin API."""
         return self._post(
             "/api/admin/companies",
-            json={"data": data, "selected_columns": selected_columns},
+            json={"data": data.model_dump(), "selected_columns": selected_columns},
         )
 
     def get(self, coid: str, *, selected_columns: list[str] | None = None) -> dict[str, Any]:
