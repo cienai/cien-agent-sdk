@@ -100,12 +100,14 @@ export class HTTPTransport {
       requestHeaders.set('Authorization', `Bearer ${token}`)
     }
 
-    let body: string | undefined
+    let body: BodyInit | undefined
     if (options.json !== undefined) {
       body = JSON.stringify(options.json)
       if (!requestHeaders.has('Content-Type')) {
         requestHeaders.set('Content-Type', 'application/json')
       }
+    } else if (options.body !== undefined) {
+      body = options.body
     }
 
     const { signal, cleanup } = createTimeoutSignal(this.timeout, options.signal)
