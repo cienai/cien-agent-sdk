@@ -1,0 +1,32 @@
+import { HTTPTransport } from '../transport.js';
+import { AdminCompaniesAPI } from './companies.js';
+import { AdminCrmAPI } from './crm.js';
+import { AdminEnvironmentsAPI } from './environments.js';
+import { AdminJobsAPI } from './jobs.js';
+import { AdminJobDataAPI } from './job-data.js';
+import { AdminMappingsAPI } from './mappings.js';
+import { AdminPartnersAPI } from './partners.js';
+import { AdminPowerBIAPI } from './powerbi.js';
+import { AdminSyncAPI } from './sync.js';
+import { AdminSyncLiveQueryAPI } from './sync-live-query.js';
+import { AdminSyncMappingsAPI } from './sync-mappings.js';
+import { AdminSyncSourceDefinitionsAPI } from './sync-source-definitions.js';
+export declare class AdminClient {
+    readonly companies: AdminCompaniesAPI;
+    readonly crm: AdminCrmAPI;
+    readonly environments: AdminEnvironmentsAPI;
+    readonly jobs: AdminJobsAPI;
+    readonly jobData: AdminJobDataAPI;
+    readonly job_data: AdminJobDataAPI;
+    readonly mappings: AdminMappingsAPI;
+    readonly partners: AdminPartnersAPI;
+    readonly powerbi: AdminPowerBIAPI;
+    readonly sync: AdminSyncAPI;
+    readonly syncLiveQuery: AdminSyncLiveQueryAPI;
+    readonly sync_live_query: AdminSyncLiveQueryAPI;
+    readonly syncMappings: AdminSyncMappingsAPI;
+    readonly sync_mappings: AdminSyncMappingsAPI;
+    readonly syncSourceDefinitions: AdminSyncSourceDefinitionsAPI;
+    readonly sync_source_definitions: AdminSyncSourceDefinitionsAPI;
+    constructor(transport: HTTPTransport);
+}
