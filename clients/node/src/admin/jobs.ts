@@ -11,9 +11,18 @@ export class AdminJobsAPI extends EndpointGroup {
     })
   }
 
-  list(coid: string, limit?: number) {
-    return this.requestGet<Array<Record<string, unknown>>>(`/api/admin/jobs/${coid}`, {
-      params: limit == null ? undefined : { limit },
+  list(
+    coid: string,
+    params?: { limit?: number; offset?: number }
+  ) {
+    return this.requestGet<Record<string, unknown>>(`/api/admin/jobs/${coid}`, {
+      params:
+        params && (params.limit != null || params.offset != null)
+          ? {
+              limit: params.limit,
+              offset: params.offset,
+            }
+          : undefined,
     })
   }
 
