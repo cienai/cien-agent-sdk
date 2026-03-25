@@ -85,6 +85,8 @@ class HTTPTransport:
         *,
         params: dict[str, Any] | None = None,
         json: Any | None = None,
+        data: Any | None = None,
+        files: Any | None = None,
         headers: dict[str, str] | None = None,
     ) -> Any:
         """Execute one HTTP request and normalize successful/error responses.
@@ -107,6 +109,8 @@ class HTTPTransport:
                 url=url,
                 params=params,
                 json=json,
+                data=data,
+                files=files,
                 headers=merged_headers,
                 timeout=self.timeout,
             )
@@ -142,6 +146,8 @@ class HTTPTransport:
                             url=url,
                             params=params,
                             json=json,
+                            data=data,
+                            files=files,
                             headers=merged_headers,
                             timeout=self.timeout,
                         )

@@ -23,6 +23,14 @@ export class AdminJobDataAPI extends EndpointGroup {
     return super.requestGet<Record<string, unknown>>(`/api/admin/job-data/${coid}`)
   }
 
+  download(payload: { coid: string; key: string }) {
+    return super.requestGet<string>(`/api/admin/job-data/${payload.coid}/download`, {
+      params: dropNullish({
+        key: payload.key,
+      }),
+    })
+  }
+
   create(coid: string) {
     return this.requestPost<Record<string, unknown>>(`/api/admin/job-data/${coid}/create`)
   }

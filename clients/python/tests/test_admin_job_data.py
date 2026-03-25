@@ -23,6 +23,46 @@ def test_create_posts_expected_path(base_url: str) -> None:
     assert session.request.call_args.kwargs["json"] is None
 
 
+def test_upload_posts_expected_form_data(base_url: str) -> None:
+    session = Mock()
+    session.request.return_value = Mock(
+        status_code=200,
+        content=b'{"message":"ok"}',
+        headers={"content-type": "application/json"},
+        json=Mock(return_value={"message": "ok"}),
+    )
+    api = AdminJobDataAPI(HTTPTransport(base_url=base_url, session=session))
+
+    result = api.upload(
+        coid="co-1",
+        upload_type="aliasing",
+        file_name="aliasing.csv",
+        file_bytes=b"a,b\n",
+    )
+
+    assert result == {"message": "ok"}
+    assert session.request.call_args.kwargs["url"].endswith("/api/admin/job-data/co-1/upload")
+    assert session.request.call_args.kwargs["data"] == {"upload_type": "aliasing"}
+    assert session.request.call_args.kwargs["files"]["file"][0] == "aliasing.csv"
+
+
+def test_download_gets_expected_key(base_url: str) -> None:
+    session = Mock()
+    session.request.return_value = Mock(
+        status_code=200,
+        content=b"hello,world\n",
+        headers={"content-type": "text/csv"},
+        text="hello,world\n",
+    )
+    api = AdminJobDataAPI(HTTPTransport(base_url=base_url, session=session))
+
+    result = api.download(coid="co-1", key="config/custom.csv")
+
+    assert result == "hello,world\n"
+    assert session.request.call_args.kwargs["url"].endswith("/api/admin/job-data/co-1/download")
+    assert session.request.call_args.kwargs["params"] == {"key": "config/custom.csv"}
+
+
 def test_refresh_posts_expected_payload(base_url: str) -> None:
     session = Mock()
     session.request.return_value = Mock(

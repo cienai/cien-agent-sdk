@@ -9,9 +9,32 @@ from ..utils import drop_none
 class AdminJobDataAPI(EndpointGroup):
     """/api/admin/job-data endpoints."""
 
+    def upload(
+        self,
+        *,
+        coid: str,
+        upload_type: str,
+        file_name: str,
+        file_bytes: bytes,
+        content_type: str = "text/csv",
+    ) -> dict[str, Any]:
+        """Upload a job data support file for one company."""
+        return self._post(
+            f"/api/admin/job-data/{coid}/upload",
+            data={"upload_type": upload_type},
+            files={"file": (file_name, file_bytes, content_type)},
+        )
+
     def get(self, *, coid: str) -> dict[str, Any]:
         """Get the current job_data_conn config for one company."""
         return self._get(f"/api/admin/job-data/{coid}")
+
+    def download(self, *, coid: str, key: str) -> str:
+        """Download a text-based file from the job data config area."""
+        return self._get(
+            f"/api/admin/job-data/{coid}/download",
+            params=drop_none({"key": key}),
+        )
 
     def create(self, *, coid: str) -> dict[str, Any]:
         """Provision a new job_data_conn for one company."""
