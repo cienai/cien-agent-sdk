@@ -2,6 +2,23 @@ import { EndpointGroup } from '../base.js'
 import { dropNullish } from '../utils.js'
 
 export class AdminJobDataAPI extends EndpointGroup {
+  upload(payload: {
+    coid: string
+    upload_type: 'hr_file' | 'aliasing' | 'groups' | 'opp_stages'
+    file: File
+  }) {
+    const formData = new FormData()
+    formData.set('upload_type', payload.upload_type)
+    formData.set('file', payload.file)
+
+    return this.requestPost<Record<string, unknown>>(
+      `/api/admin/job-data/${payload.coid}/upload`,
+      {
+        body: formData,
+      }
+    )
+  }
+
   get(coid: string) {
     return super.requestGet<Record<string, unknown>>(`/api/admin/job-data/${coid}`)
   }

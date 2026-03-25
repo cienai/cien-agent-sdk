@@ -31,6 +31,7 @@ export type FetchLike = (input: RequestInfo | URL, init?: RequestInit) => Promis
 export interface RequestOptions {
   params?: QueryParams
   json?: unknown
+  body?: BodyInit
   headers?: HeadersInit
   signal?: AbortSignal
 }
