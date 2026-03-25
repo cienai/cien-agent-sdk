@@ -16,6 +16,12 @@ export class PublicUserCompanyPermissionsAPI extends EndpointGroup {
     )
   }
 
+  getCurrentUserPermissionForCompany(params: { coid: string }) {
+    return this.requestGet<Record<string, unknown>>(
+      `/api/user-company-permissions/company/${params.coid}/me`
+    )
+  }
+
   set(payload: { email: string; coid: string; permission_role: PermissionRole }) {
     return this.requestPost<Record<string, unknown>>('/api/user-company-permissions/set', {
       json: payload,

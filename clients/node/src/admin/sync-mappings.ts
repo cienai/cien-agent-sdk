@@ -70,4 +70,13 @@ export class AdminSyncMappingsAPI extends EndpointGroup {
       }
     )
   }
+
+  patchMappingItem(syncId: number, crmEntity: string, mapping: Record<string, unknown>) {
+    return this.requestPatch<Array<Record<string, unknown>>>(
+      `/api/admin/sync-mappings/${syncId}/mappings/${crmEntity}`,
+      {
+        json: { mapping },
+      }
+    )
+  }
 }
