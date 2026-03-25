@@ -16,9 +16,17 @@ class EndpointGroup:
         """Send a GET request for an endpoint path."""
         return self._transport.request("GET", path, params=params)
 
-    def _post(self, path: str, *, json: Any | None = None, params: dict[str, Any] | None = None) -> Any:
+    def _post(
+        self,
+        path: str,
+        *,
+        json: Any | None = None,
+        params: dict[str, Any] | None = None,
+        data: dict[str, Any] | None = None,
+        files: dict[str, Any] | None = None,
+    ) -> Any:
         """Send a POST request for an endpoint path."""
-        return self._transport.request("POST", path, json=json, params=params)
+        return self._transport.request("POST", path, json=json, params=params, data=data, files=files)
 
     def _put(self, path: str, *, json: Any | None = None, params: dict[str, Any] | None = None) -> Any:
         """Send a PUT request for an endpoint path."""
