@@ -11,6 +11,7 @@ client = CienClient(
     base_url="https://your-agent-os-host",
     token="<bearer-token>",  # optional
     timeout=30.0,            # optional
+    max_retries=3,           # optional; GET retries enabled by default
     default_headers={        # optional
         "X-Request-Id": "job-123",
     },
@@ -64,6 +65,24 @@ except RequestError as exc:
 - Use `.lookup(...)` when you may have alternate identifiers (for example ID or name/email).
 - Use `.update(...)` methods for partial updates.
 - Use `.delete(...)` methods for removals.
+
+## GET Retry Behavior
+
+The SDK retries `GET` requests by default when it sees transient failures.
+
+- `max_retries=3` by default
+- Retryable HTTP statuses: `429`, `502`, `503`, `504`
+- Retryable request failures: timeouts and connection errors
+- Backoff schedule: `5s`, `10s`, `30s`
+- Non-GET requests are not retried
+
+```python
+client = CienClient(
+    base_url="https://your-agent-os-host",
+    token="<bearer-token>",
+    max_retries=5,
+)
+```
 
 ## Endpoint References
 
