@@ -31,6 +31,7 @@ from cien_agent_sdk import CienClient
 client = CienClient(
     base_url="https://your-agent-os-host",
     token="<clerk-jwt-or-bearer-token>",
+    max_retries=3,
 )
 
 companies = client.public.companies.list()
@@ -73,6 +74,23 @@ except APIError as exc:
     print(exc.status_code, exc.message, exc.response_body)
 except RequestError as exc:
     print(str(exc))
+```
+
+## GET Retry Defaults
+
+`CienClient` enables GET retries by default with `max_retries=3`.
+
+- Retryable HTTP statuses: `429`, `502`, `503`, `504`
+- Retryable request failures: connection errors and timeouts
+- Delay schedule: `5s`, `10s`, `30s`
+- Non-GET methods are not retried
+
+```python
+client = CienClient(
+    base_url="https://your-agent-os-host",
+    token="<clerk-jwt-or-bearer-token>",
+    max_retries=5,
+)
 ```
 
 ## Clerk API Key Helpers

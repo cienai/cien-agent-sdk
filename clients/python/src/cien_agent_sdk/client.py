@@ -26,6 +26,7 @@ class CienClient:
         token: str | None = None,
         token_provider: Callable[[], Optional[str]] | None = None,
         timeout: float = 30.0,
+        max_retries: int = 3,
         default_headers: dict[str, str] | None = None,
         session: requests.Session | None = None,
     ) -> None:
@@ -35,6 +36,7 @@ class CienClient:
             token=token,
             token_provider=token_provider,
             timeout=timeout,
+            max_retries=max_retries,
             default_headers=default_headers,
             session=session,
         )

@@ -6,6 +6,7 @@ from unittest.mock import Mock
 import pytest
 import requests
 
+import cien_agent_sdk.transport as transport_module
 from cien_agent_sdk.errors import APIError, RequestError
 from cien_agent_sdk.transport import HTTPTransport
 
@@ -54,6 +55,8 @@ def test_request_builds_url_and_headers_with_token(base_url: str, clerk_api_toke
         url=f"{base_url.rstrip('/')}/v1/health",
         params=None,
         json=None,
+        data=None,
+        files=None,
         headers={"X-Default": "1", "Authorization": f"Bearer {clerk_api_token}", "X-Req": "2"},
         timeout=12.5,
     )
@@ -163,3 +166,156 @@ def test_request_hydrates_iso_datetime_and_date_values(base_url: str) -> None:
     assert result["effective_date"] == date(2026, 3, 1)
     assert result["nested"]["items"][0] == datetime(2026, 3, 12, 10, 11, 12, tzinfo=timezone.utc)
     assert result["nested"]["items"][1] == "plain"
+
+
+def test_get_retries_on_retryable_statuses_with_default_backoff(base_url: str, monkeypatch: pytest.MonkeyPatch) -> None:
+    session = Mock()
+    session.request.side_effect = [
+        _response(
+            status_code=502,
+            content=b'{"detail":"bad gateway"}',
+            headers={"content-type": "application/json"},
+            json_value={"detail": "bad gateway"},
+        ),
+        _response(
+            status_code=503,
+            content=b'{"detail":"unavailable"}',
+            headers={"content-type": "application/json"},
+            json_value={"detail": "unavailable"},
+        ),
+        _response(
+            status_code=200,
+            content=b'{"ok": true}',
+            headers={"content-type": "application/json"},
+            json_value={"ok": True},
+        ),
+    ]
+    sleep_calls: list[float] = []
+    monkeypatch.setattr(transport_module.time, "sleep", lambda seconds: sleep_calls.append(seconds))
+    transport = HTTPTransport(base_url=base_url, session=session)
+
+    result = transport.request("GET", "/v1/retry")
+
+    assert result == {"ok": True}
+    assert sleep_calls == [5.0, 10.0]
+    assert session.request.call_count == 3
+
+
+def test_get_retries_on_connection_errors_with_default_backoff(base_url: str, monkeypatch: pytest.MonkeyPatch) -> None:
+    session = Mock()
+    session.request.side_effect = [
+        requests.Timeout("timed out"),
+        requests.ConnectionError("connection dropped"),
+        _response(
+            status_code=200,
+            content=b'{"ok": true}',
+            headers={"content-type": "application/json"},
+            json_value={"ok": True},
+        ),
+    ]
+    sleep_calls: list[float] = []
+    monkeypatch.setattr(transport_module.time, "sleep", lambda seconds: sleep_calls.append(seconds))
+    transport = HTTPTransport(base_url=base_url, session=session)
+
+    result = transport.request("GET", "/v1/retry")
+
+    assert result == {"ok": True}
+    assert sleep_calls == [5.0, 10.0]
+    assert session.request.call_count == 3
+
+
+def test_get_uses_third_default_backoff_slot_of_thirty_seconds(base_url: str, monkeypatch: pytest.MonkeyPatch) -> None:
+    session = Mock()
+    session.request.side_effect = [
+        _response(
+            status_code=502,
+            content=b'{"detail":"bad gateway"}',
+            headers={"content-type": "application/json"},
+            json_value={"detail": "bad gateway"},
+        ),
+        _response(
+            status_code=502,
+            content=b'{"detail":"bad gateway"}',
+            headers={"content-type": "application/json"},
+            json_value={"detail": "bad gateway"},
+        ),
+        _response(
+            status_code=504,
+            content=b'{"detail":"gateway timeout"}',
+            headers={"content-type": "application/json"},
+            json_value={"detail": "gateway timeout"},
+        ),
+        _response(
+            status_code=200,
+            content=b'{"ok": true}',
+            headers={"content-type": "application/json"},
+            json_value={"ok": True},
+        ),
+    ]
+    sleep_calls: list[float] = []
+    monkeypatch.setattr(transport_module.time, "sleep", lambda seconds: sleep_calls.append(seconds))
+    transport = HTTPTransport(base_url=base_url, session=session)
+
+    result = transport.request("GET", "/v1/retry")
+
+    assert result == {"ok": True}
+    assert sleep_calls == [5.0, 10.0, 30.0]
+    assert session.request.call_count == 4
+
+
+def test_get_raises_after_exhausting_retry_budget(base_url: str, monkeypatch: pytest.MonkeyPatch) -> None:
+    session = Mock()
+    session.request.side_effect = [
+        _response(
+            status_code=503,
+            content=b'{"detail":"unavailable"}',
+            headers={"content-type": "application/json"},
+            json_value={"detail": "unavailable"},
+        ),
+        _response(
+            status_code=503,
+            content=b'{"detail":"unavailable"}',
+            headers={"content-type": "application/json"},
+            json_value={"detail": "unavailable"},
+        ),
+        _response(
+            status_code=503,
+            content=b'{"detail":"unavailable"}',
+            headers={"content-type": "application/json"},
+            json_value={"detail": "unavailable"},
+        ),
+        _response(
+            status_code=503,
+            content=b'{"detail":"unavailable"}',
+            headers={"content-type": "application/json"},
+            json_value={"detail": "unavailable"},
+        ),
+    ]
+    sleep_calls: list[float] = []
+    monkeypatch.setattr(transport_module.time, "sleep", lambda seconds: sleep_calls.append(seconds))
+    transport = HTTPTransport(base_url=base_url, session=session)
+
+    with pytest.raises(APIError, match="unavailable"):
+        transport.request("GET", "/v1/retry")
+
+    assert sleep_calls == [5.0, 10.0, 30.0]
+    assert session.request.call_count == 4
+
+
+def test_non_get_requests_do_not_retry(base_url: str, monkeypatch: pytest.MonkeyPatch) -> None:
+    session = Mock()
+    session.request.return_value = _response(
+        status_code=502,
+        content=b'{"detail":"bad gateway"}',
+        headers={"content-type": "application/json"},
+        json_value={"detail": "bad gateway"},
+    )
+    sleep_calls: list[float] = []
+    monkeypatch.setattr(transport_module.time, "sleep", lambda seconds: sleep_calls.append(seconds))
+    transport = HTTPTransport(base_url=base_url, session=session)
+
+    with pytest.raises(APIError, match="bad gateway"):
+        transport.request("POST", "/v1/retry")
+
+    assert sleep_calls == []
+    assert session.request.call_count == 1

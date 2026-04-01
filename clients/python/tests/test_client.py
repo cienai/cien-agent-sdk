@@ -29,3 +29,9 @@ def test_client_set_token_delegates_to_transport(base_url: str, clerk_api_token:
 
 def test_backward_compat_alias_points_to_client() -> None:
     assert CienAgentClient is CienClient
+
+
+def test_client_passes_max_retries_to_transport(base_url: str) -> None:
+    client = CienClient(base_url=base_url, max_retries=5)
+
+    assert client.transport.max_retries == 5
