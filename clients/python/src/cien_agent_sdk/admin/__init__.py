@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from ..transport import HTTPTransport
 from .companies import AdminCompaniesAPI
+from .companies_history import AdminCompaniesHistoryAPI
 from .crm import AdminCrmAPI
 from .environments import AdminEnvironmentsAPI
 from .jobs import AdminJobsAPI
@@ -19,6 +20,7 @@ class AdminClient:
     def __init__(self, transport: HTTPTransport) -> None:
         """Initialize grouped admin endpoint clients."""
         self.companies = AdminCompaniesAPI(transport)
+        self.companies_history = AdminCompaniesHistoryAPI(transport)
         self.crm = AdminCrmAPI(transport)
         self.environments = AdminEnvironmentsAPI(transport)
         self.jobs = AdminJobsAPI(transport)
