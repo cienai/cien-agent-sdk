@@ -55,6 +55,13 @@ class AdminSyncAPI(EndpointGroup):
         """Update an existing sync record."""
         return self._patch(f"/api/admin/sync/{sync_id}", json=payload)
 
+    def set_status_key(self, sync_id: int, *, key: str, value: Any | None) -> dict[str, Any]:
+        """Set or clear one sync.status key and return the updated sync record."""
+        return self._patch(
+            f"/api/admin/sync/{sync_id}/status-key",
+            json={"key": key, "value": value},
+        )
+
     def delete(self, sync_id: int) -> None:
         """Delete a sync record by ID."""
         self._delete(f"/api/admin/sync/{sync_id}")

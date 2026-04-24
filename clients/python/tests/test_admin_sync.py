@@ -81,3 +81,22 @@ def test_reset_posts_expected_payload(base_url: str) -> None:
     payload = session.request.call_args.kwargs["json"]
     assert called_url.endswith("/api/admin/sync/reset")
     assert payload == {"sync_id": 123, "crm_entity": "Account", "reset_delta": False}
+
+
+def test_set_status_key_patches_expected_payload(base_url: str) -> None:
+    session = Mock()
+    session.request.return_value = Mock(
+        status_code=200,
+        content=b'{"id":123,"status":{"Account":"2024-01-02T03:04:05+00:00"}}',
+        headers={"content-type": "application/json"},
+        json=Mock(return_value={"id": 123, "status": {"Account": "2024-01-02T03:04:05+00:00"}}),
+    )
+    api = AdminSyncAPI(HTTPTransport(base_url=base_url, session=session))
+
+    result = api.set_status_key(123, key="Account", value="2024-01-02T03:04:05+00:00")
+
+    assert result["id"] == 123
+    called_url = session.request.call_args.kwargs["url"]
+    payload = session.request.call_args.kwargs["json"]
+    assert called_url.endswith("/api/admin/sync/123/status-key")
+    assert payload == {"key": "Account", "value": "2024-01-02T03:04:05+00:00"}
