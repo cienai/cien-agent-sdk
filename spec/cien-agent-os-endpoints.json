@@ -1,8 +1,8 @@
 {
   "generated_at_utc": "2026-03-09T09:53:42.095881+00:00",
   "agent_os_path": "/home/ben/cien-agent/cien-agent-os",
-  "endpoint_count": 102,
-  "sdk_included_count": 79,
+  "endpoint_count": 104,
+  "sdk_included_count": 81,
   "endpoints": [
     {
       "method": "GET",
@@ -86,6 +86,16 @@
     },
     {
       "method": "POST",
+      "path": "/api/admin/copy-to-staging-log/{coid}",
+      "router_name": "router",
+      "router_prefix": "/api/admin/copy-to-staging-log",
+      "source_file": "api/routes/admin/copy_to_staging_log.py",
+      "source_line": 40,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "POST",
       "path": "/api/admin/crm/describe",
       "router_name": "router",
       "router_prefix": "/api/admin/crm",
@@ -101,26 +111,6 @@
       "router_prefix": "/api/admin/crm",
       "source_file": "api/routes/admin/crm.py",
       "source_line": 65,
-      "included_in_sdk": true,
-      "reason": null
-    },
-    {
-      "method": "POST",
-      "path": "/api/admin/sync_live_query/describe",
-      "router_name": "router",
-      "router_prefix": "/api/admin/sync_live_query",
-      "source_file": "api/routes/admin/sync_live_query.py",
-      "source_line": 33,
-      "included_in_sdk": true,
-      "reason": null
-    },
-    {
-      "method": "POST",
-      "path": "/api/admin/sync_live_query/query",
-      "router_name": "router",
-      "router_prefix": "/api/admin/sync_live_query",
-      "source_file": "api/routes/admin/sync_live_query.py",
-      "source_line": 56,
       "included_in_sdk": true,
       "reason": null
     },
@@ -185,6 +175,26 @@
       "reason": null
     },
     {
+      "method": "PATCH",
+      "path": "/api/admin/job-engine-logs/{coid}",
+      "router_name": "router",
+      "router_prefix": "/api/admin/job-engine-logs",
+      "source_file": "api/routes/admin/job_engine_logs.py",
+      "source_line": 211,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "POST",
+      "path": "/api/admin/jobs/run",
+      "router_name": "router",
+      "router_prefix": "/api/admin/jobs",
+      "source_file": "api/routes/admin/jobs.py",
+      "source_line": 346,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
       "method": "GET",
       "path": "/api/admin/jobs/{coid}",
       "router_name": "router",
@@ -201,16 +211,6 @@
       "router_prefix": "/api/admin/jobs",
       "source_file": "api/routes/admin/jobs.py",
       "source_line": 413,
-      "included_in_sdk": true,
-      "reason": null
-    },
-    {
-      "method": "POST",
-      "path": "/api/admin/jobs/run",
-      "router_name": "router",
-      "router_prefix": "/api/admin/jobs",
-      "source_file": "api/routes/admin/jobs.py",
-      "source_line": 346,
       "included_in_sdk": true,
       "reason": null
     },
@@ -491,6 +491,26 @@
       "router_prefix": "/api/admin/sync",
       "source_file": "api/routes/admin/sync.py",
       "source_line": 306,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "POST",
+      "path": "/api/admin/sync_live_query/describe",
+      "router_name": "router",
+      "router_prefix": "/api/admin/sync_live_query",
+      "source_file": "api/routes/admin/sync_live_query.py",
+      "source_line": 33,
+      "included_in_sdk": true,
+      "reason": null
+    },
+    {
+      "method": "POST",
+      "path": "/api/admin/sync_live_query/query",
+      "router_name": "router",
+      "router_prefix": "/api/admin/sync_live_query",
+      "source_file": "api/routes/admin/sync_live_query.py",
+      "source_line": 56,
       "included_in_sdk": true,
       "reason": null
     },
