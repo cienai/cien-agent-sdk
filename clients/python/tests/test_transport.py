@@ -89,6 +89,52 @@ def test_request_raises_api_error_from_json_detail(base_url: str) -> None:
     assert err.value.response_body == {"detail": "forbidden"}
 
 
+def test_request_retries_transient_401_token_verification_server_error(base_url: str, monkeypatch: pytest.MonkeyPatch) -> None:
+    session = Mock()
+    session.request.side_effect = [
+        _response(
+            status_code=401,
+            content=b'{"detail":"Authentication failed: TokenVerificationErrorReason.SERVER_ERROR"}',
+            headers={"content-type": "application/json"},
+            json_value={"detail": "Authentication failed: TokenVerificationErrorReason.SERVER_ERROR"},
+        ),
+        _response(
+            status_code=200,
+            content=b'{"ok": true}',
+            headers={"content-type": "application/json"},
+            json_value={"ok": True},
+        ),
+    ]
+    sleep_calls: list[float] = []
+    monkeypatch.setattr(transport_module.time, "sleep", lambda seconds: sleep_calls.append(seconds))
+    transport = HTTPTransport(base_url=base_url, session=session)
+
+    result = transport.request("GET", "/v1/retry")
+
+    assert result == {"ok": True}
+    assert sleep_calls == [5.0]
+    assert session.request.call_count == 2
+
+
+def test_request_does_not_retry_other_401s(base_url: str, monkeypatch: pytest.MonkeyPatch) -> None:
+    session = Mock()
+    session.request.return_value = _response(
+        status_code=401,
+        content=b'{"detail":"Authentication failed: bad token"}',
+        headers={"content-type": "application/json"},
+        json_value={"detail": "Authentication failed: bad token"},
+    )
+    sleep_calls: list[float] = []
+    monkeypatch.setattr(transport_module.time, "sleep", lambda seconds: sleep_calls.append(seconds))
+    transport = HTTPTransport(base_url=base_url, session=session)
+
+    with pytest.raises(APIError, match="bad token"):
+        transport.request("GET", "/v1/retry")
+
+    assert sleep_calls == []
+    assert session.request.call_count == 1
+
+
 def test_request_raises_api_error_with_text_payload_when_json_parse_fails(base_url: str) -> None:
     session = Mock()
     session.request.return_value = _response(

@@ -5,7 +5,8 @@ transient request failures and transient HTTP statuses with default waits of
 5, 10, and 30 seconds. If a request fails with a 401 that appears to be a
 token-expired error, and a token provider callable was provided, the
 transport will call the provider to obtain a replacement token, set it, and
-retry the request once.
+retry the request once. The transport also retries transient 401 token
+verification server errors, which can clear on a short backoff.
 """
 
 from __future__ import annotations
@@ -85,6 +86,14 @@ class HTTPTransport:
             detail = str(payload)
         lower = detail.lower()
         return "token_expired" in lower or "tokenverificationerrorreason.token_expired" in lower or "expired" in lower
+
+    def _is_token_verification_server_error_payload(self, payload: Any) -> bool:
+        if isinstance(payload, dict):
+            detail = str(payload.get("detail", ""))
+        else:
+            detail = str(payload)
+        lower = detail.lower()
+        return "tokenverificationerrorreason.server_error" in lower
 
     def _build_headers(self, token: Optional[str], headers: dict[str, str] | None) -> dict[str, str]:
         merged_headers = dict(self.default_headers)
@@ -179,6 +188,15 @@ class HTTPTransport:
                     if new_token:
                         self._token = new_token
                         continue
+
+                if (
+                    response.status_code == 401
+                    and retry_count < self.max_retries
+                    and self._is_token_verification_server_error_payload(payload)
+                ):
+                    retry_count += 1
+                    self._sleep_before_retry(retry_count)
+                    continue
 
                 if (
                     self._is_retryable_method(method)
