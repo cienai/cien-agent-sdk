@@ -25,7 +25,7 @@ class CienClient:
         base_url: str,
         token: str | None = None,
         token_provider: Callable[[], Optional[str]] | None = None,
-        timeout: float = 30.0,
+        timeout: float = 60.0,
         max_retries: int = 3,
         default_headers: dict[str, str] | None = None,
         session: requests.Session | None = None,

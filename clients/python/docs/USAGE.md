@@ -10,7 +10,7 @@ from cien_agent_sdk import CienClient
 client = CienClient(
     base_url="https://your-agent-os-host",
     token="<bearer-token>",  # optional
-    timeout=30.0,            # optional
+    timeout=60.0,            # optional; default is 60.0s
     max_retries=3,           # optional; GET retries enabled by default
     default_headers={        # optional
         "X-Request-Id": "job-123",

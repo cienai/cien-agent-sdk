@@ -62,6 +62,12 @@ def test_request_builds_url_and_headers_with_token(base_url: str, clerk_api_toke
     )
 
 
+def test_transport_uses_longer_default_timeout(base_url: str) -> None:
+    transport = HTTPTransport(base_url=base_url, session=Mock())
+
+    assert transport.timeout == 60.0
+
+
 def test_request_raises_request_error_on_requests_exception(base_url: str) -> None:
     session = Mock()
     session.request.side_effect = requests.Timeout("timed out")

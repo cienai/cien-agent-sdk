@@ -76,7 +76,7 @@ export class HTTPTransport {
       )
     }
     this.baseUrl = options.baseUrl.replace(/\/+$/, '')
-    this.timeout = options.timeout ?? 30_000
+    this.timeout = options.timeout ?? 60_000
     this.fetchImpl = options.fetch ?? globalThis.fetch.bind(globalThis)
     this.defaultHeaders = options.defaultHeaders
     this.token = options.token

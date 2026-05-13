@@ -37,3 +37,9 @@ def test_client_passes_max_retries_to_transport(base_url: str) -> None:
     client = CienClient(base_url=base_url, max_retries=5)
 
     assert client.transport.max_retries == 5
+
+
+def test_client_uses_longer_default_timeout(base_url: str) -> None:
+    client = CienClient(base_url=base_url)
+
+    assert client.transport.timeout == 60.0

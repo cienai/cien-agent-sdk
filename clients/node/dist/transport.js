@@ -61,7 +61,7 @@ export class HTTPTransport {
             throw new RequestError('Global fetch is not available. Pass a fetch implementation in the client options.');
         }
         this.baseUrl = options.baseUrl.replace(/\/+$/, '');
-        this.timeout = options.timeout ?? 30_000;
+        this.timeout = options.timeout ?? 60_000;
         this.fetchImpl = options.fetch ?? globalThis.fetch.bind(globalThis);
         this.defaultHeaders = options.defaultHeaders;
         this.token = options.token;

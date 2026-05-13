@@ -82,6 +82,7 @@ except RequestError as exc:
 
 - Retryable HTTP statuses: `429`, `502`, `503`, `504`
 - Retryable request failures: connection errors and timeouts
+- Default request timeout: `60s`
 - Delay schedule: `5s`, `10s`, `30s`
 - Non-GET methods are not retried
 

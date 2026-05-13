@@ -1,12 +1,13 @@
 """HTTP transport and request plumbing.
 
-Supports a string token or a callable token provider. GET requests retry
-transient request failures and transient HTTP statuses with default waits of
-5, 10, and 30 seconds. If a request fails with a 401 that appears to be a
-token-expired error, and a token provider callable was provided, the
-transport will call the provider to obtain a replacement token, set it, and
-retry the request once. The transport also retries transient 401 token
-verification server errors, which can clear on a short backoff.
+Supports a string token or a callable token provider. Requests use a 60-second
+default timeout. GET requests retry transient request failures and transient
+HTTP statuses with default waits of 5, 10, and 30 seconds. If a request fails
+with a 401 that appears to be a token-expired error, and a token provider
+callable was provided, the transport will call the provider to obtain a
+replacement token, set it, and retry the request once. The transport also
+retries transient 401 token verification server errors, which can clear on a
+short backoff.
 """
 
 from __future__ import annotations
@@ -37,7 +38,7 @@ class HTTPTransport:
         # token may be a callable provider returning a token string
         # (sync). Backwards-compatible with passing a raw token string.
         token_provider: TokenProvider | None = None,
-        timeout: float = 30.0,
+        timeout: float = 60.0,
         max_retries: int = 3,
         default_headers: dict[str, str] | None = None,
         session: requests.Session | None = None,

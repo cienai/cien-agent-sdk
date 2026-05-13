@@ -35,7 +35,7 @@ def test_admin_partners_list_live_api_call(
     if not run_live_api:
         pytest.skip("Live API test skipped. Provide --run-live-api or non-default --base-url/--clerk-api-token.")
 
-    client = CienClient(base_url=base_url, token=clerk_api_token, timeout=30.0)
+    client = CienClient(base_url=base_url, token=clerk_api_token, timeout=60.0)
     result = client.admin.partners.list()
     print("Partners:", result)
     assert isinstance(result, list)
