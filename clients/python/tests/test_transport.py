@@ -371,3 +371,52 @@ def test_non_get_requests_do_not_retry(base_url: str, monkeypatch: pytest.Monkey
 
     assert sleep_calls == []
     assert session.request.call_count == 1
+
+
+def test_non_get_requests_retry_when_explicitly_marked_retryable(base_url: str, monkeypatch: pytest.MonkeyPatch) -> None:
+    session = Mock()
+    session.request.side_effect = [
+        _response(
+            status_code=502,
+            content=b'{"detail":"bad gateway"}',
+            headers={"content-type": "application/json"},
+            json_value={"detail": "bad gateway"},
+        ),
+        _response(
+            status_code=200,
+            content=b'{"ok": true}',
+            headers={"content-type": "application/json"},
+            json_value={"ok": True},
+        ),
+    ]
+    sleep_calls: list[float] = []
+    monkeypatch.setattr(transport_module.time, "sleep", lambda seconds: sleep_calls.append(seconds))
+    transport = HTTPTransport(base_url=base_url, session=session)
+
+    result = transport.request("POST", "/v1/retry", retryable=True)
+
+    assert result == {"ok": True}
+    assert sleep_calls == [5.0]
+    assert session.request.call_count == 2
+
+
+def test_non_get_requests_retry_connection_errors_when_explicitly_marked_retryable(base_url: str, monkeypatch: pytest.MonkeyPatch) -> None:
+    session = Mock()
+    session.request.side_effect = [
+        requests.Timeout("timed out"),
+        _response(
+            status_code=200,
+            content=b'{"ok": true}',
+            headers={"content-type": "application/json"},
+            json_value={"ok": True},
+        ),
+    ]
+    sleep_calls: list[float] = []
+    monkeypatch.setattr(transport_module.time, "sleep", lambda seconds: sleep_calls.append(seconds))
+    transport = HTTPTransport(base_url=base_url, session=session)
+
+    result = transport.request("POST", "/v1/retry", retryable=True)
+
+    assert result == {"ok": True}
+    assert sleep_calls == [5.0]
+    assert session.request.call_count == 2

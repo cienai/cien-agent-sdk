@@ -104,8 +104,8 @@ class HTTPTransport:
             merged_headers.update(headers)
         return merged_headers
 
-    def _is_retryable_method(self, method: str) -> bool:
-        return method.upper() in RETRYABLE_METHODS
+    def _should_retry_request(self, method: str, retryable: bool) -> bool:
+        return retryable or method.upper() in RETRYABLE_METHODS
 
     def _retry_delay_seconds(self, retry_number: int) -> float:
         if retry_number <= 1:
@@ -129,12 +129,16 @@ class HTTPTransport:
         data: Any | None = None,
         files: Any | None = None,
         headers: dict[str, str] | None = None,
+        retryable: bool = False,
     ) -> Any:
         """Execute one HTTP request and normalize successful/error responses.
 
         Raises:
             RequestError: Network, DNS, timeout, or other request-layer failures.
             APIError: Any HTTP response with status code >= 400.
+
+        The `retryable` flag enables the standard transient retry policy for
+        non-GET requests that are known to be safe to retry.
         """
         method = method.upper()
         url = f"{self.base_url}/{path.lstrip('/')}"
@@ -157,7 +161,7 @@ class HTTPTransport:
                     timeout=self.timeout,
                 )
             except RETRYABLE_EXCEPTIONS as exc:
-                if self._is_retryable_method(method) and retry_count < self.max_retries:
+                if self._should_retry_request(method, retryable) and retry_count < self.max_retries:
                     retry_count += 1
                     self._sleep_before_retry(retry_count)
                     continue
@@ -193,6 +197,7 @@ class HTTPTransport:
                 if (
                     response.status_code == 401
                     and retry_count < self.max_retries
+                    and self._should_retry_request(method, retryable)
                     and self._is_token_verification_server_error_payload(payload)
                 ):
                     retry_count += 1
@@ -200,7 +205,7 @@ class HTTPTransport:
                     continue
 
                 if (
-                    self._is_retryable_method(method)
+                    self._should_retry_request(method, retryable)
                     and response.status_code in RETRYABLE_STATUS_CODES
                     and retry_count < self.max_retries
                 ):

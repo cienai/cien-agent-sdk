@@ -76,3 +76,22 @@ def test_initialize_schemas_sends_expected_payload(base_url: str) -> None:
     assert call["method"] == "POST"
     assert call["url"] == f"{base_url.rstrip('/')}/api/schemas/co-1/initialize"
     assert call["params"] == {"crm_type": "salesforce"}
+
+
+def test_initialize_schemas_marks_request_retryable(base_url: str) -> None:
+    transport = Mock(spec=HTTPTransport)
+    transport.request.return_value = {"message": "ok"}
+    api = PublicSchemasAPI(transport)
+
+    result = api.initialize_schemas(coid="co-1", crm_type="salesforce")
+
+    assert result == {"message": "ok"}
+    transport.request.assert_called_once_with(
+        "POST",
+        "/api/schemas/co-1/initialize",
+        json=None,
+        params={"crm_type": "salesforce"},
+        data=None,
+        files=None,
+        retryable=True,
+    )

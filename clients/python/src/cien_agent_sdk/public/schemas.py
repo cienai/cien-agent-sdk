@@ -28,4 +28,5 @@ class PublicSchemasAPI(EndpointGroup):
         return self._post(
             f"/api/schemas/{coid}/initialize",
             params={"crm_type": crm_type} if crm_type is not None else None,
+            retryable=True,
         )
