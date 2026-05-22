@@ -15,6 +15,7 @@ from .powerbi import AdminPowerBIAPI
 from .sync import AdminSyncAPI
 from .sync_live_query import AdminSyncLiveQueryAPI
 from .sync_mappings import AdminSyncMappingsAPI
+from .sync_mappings_new import AdminSyncMappingsNewAPI
 from .sync_source_definitions import AdminSyncSourceDefinitionsAPI
 
 
@@ -35,4 +36,5 @@ class AdminClient:
         self.sync = AdminSyncAPI(transport)
         self.sync_live_query = AdminSyncLiveQueryAPI(transport)
         self.sync_mappings = AdminSyncMappingsAPI(transport)
+        self.sync_mappings_new = AdminSyncMappingsNewAPI(transport)
         self.sync_source_definitions = AdminSyncSourceDefinitionsAPI(transport)
