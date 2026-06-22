@@ -72,4 +72,4 @@ class AdminEnvironmentsAPI(EndpointGroup):
 
     def copy_global_tables(self) -> dict[str, Any]:
         """Truncate-and-replace global postgres tables in staging from prod."""
-        return self._post("/api/admin/environments/copy-global-tables")
+        return self._post("/api/admin/environments/copy-global-tables", retryable=True)
