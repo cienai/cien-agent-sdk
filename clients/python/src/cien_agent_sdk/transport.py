@@ -6,8 +6,9 @@ HTTP statuses with default waits of 5, 10, and 30 seconds. If a request fails
 with a 401 that appears to be a token-expired error, and a token provider
 callable was provided, the transport will call the provider to obtain a
 replacement token, set it, and retry the request once. The transport also
-retries transient 401 token verification server errors, which can clear on a
-short backoff.
+retries transient 401 token verification server errors on any HTTP method,
+since that error indicates Clerk's infrastructure failed rather than a bad
+token, and the retry is always safe.
 """
 
 from __future__ import annotations
@@ -197,7 +198,6 @@ class HTTPTransport:
                 if (
                     response.status_code == 401
                     and retry_count < self.max_retries
-                    and self._should_retry_request(method, retryable)
                     and self._is_token_verification_server_error_payload(payload)
                 ):
                     retry_count += 1
