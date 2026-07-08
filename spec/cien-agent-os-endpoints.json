@@ -86,11 +86,11 @@
     },
     {
       "method": "POST",
-      "path": "/api/admin/copy-to-staging-log/{coid}",
+      "path": "/api/admin/company-purge-and-copy-logs/{coid}",
       "router_name": "router",
-      "router_prefix": "/api/admin/copy-to-staging-log",
-      "source_file": "api/routes/admin/copy_to_staging_log.py",
-      "source_line": 40,
+      "router_prefix": "/api/admin/company-purge-and-copy-logs",
+      "source_file": "api/routes/admin/company_purge_and_copy_logs.py",
+      "source_line": 55,
       "included_in_sdk": true,
       "reason": null
     },

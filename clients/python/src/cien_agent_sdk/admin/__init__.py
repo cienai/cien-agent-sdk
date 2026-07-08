@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from ..transport import HTTPTransport
 from .companies import AdminCompaniesAPI
-from .copy_to_staging_log import AdminCopyToStagingLogAPI
+from .company_purge_and_copy_logs import AdminCompanyPurgeAndCopyLogsAPI
 from .data_deletions import AdminDataDeletionsAPI
 from .companies_history import AdminCompaniesHistoryAPI
 from .crm import AdminCrmAPI
@@ -24,7 +24,7 @@ class AdminClient:
     def __init__(self, transport: HTTPTransport) -> None:
         """Initialize grouped admin endpoint clients."""
         self.companies = AdminCompaniesAPI(transport)
-        self.copy_to_staging_log = AdminCopyToStagingLogAPI(transport)
+        self.company_purge_and_copy_logs = AdminCompanyPurgeAndCopyLogsAPI(transport)
         self.data_deletions = AdminDataDeletionsAPI(transport)
         self.companies_history = AdminCompaniesHistoryAPI(transport)
         self.crm = AdminCrmAPI(transport)
