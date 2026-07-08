@@ -90,7 +90,7 @@
       "router_name": "router",
       "router_prefix": "/api/admin/company-purge-and-copy-logs",
       "source_file": "api/routes/admin/company_purge_and_copy_logs.py",
-      "source_line": 47,
+      "source_line": 55,
       "included_in_sdk": true,
       "reason": null
     },

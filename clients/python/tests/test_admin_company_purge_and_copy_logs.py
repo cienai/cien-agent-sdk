@@ -16,7 +16,9 @@ def test_create_posts_expected_payload(base_url: str) -> None:
     )
     api = AdminCompanyPurgeAndCopyLogsAPI(HTTPTransport(base_url=base_url, session=session))
 
-    api.create('co-1', user='user-1', reason='reason-1', event='purge_staging')
+    api.create('co-1', user='user-1', reason='reason-1', event='purge_staging', status='success')
 
     assert session.request.call_args.kwargs['url'].endswith('/api/admin/company-purge-and-copy-logs/co-1')
-    assert session.request.call_args.kwargs['json'] == {'user': 'user-1', 'reason': 'reason-1', 'event': 'purge_staging'}
+    assert session.request.call_args.kwargs['json'] == {
+        'user': 'user-1', 'reason': 'reason-1', 'event': 'purge_staging', 'status': 'success',
+    }
