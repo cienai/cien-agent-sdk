@@ -102,3 +102,65 @@ def test_set_mapping_targets_entity_url(base_url: str) -> None:
     assert session.request.call_args.kwargs["method"] == "PUT"
     assert called_url.endswith("/api/admin/sync-mappings/13/mappings/Account")
     assert session.request.call_args.kwargs["json"] == {"mappings": [{"key": "Id"}]}
+
+
+def test_get_mapping_type_is_cached_for_the_run(base_url: str) -> None:
+    session = Mock()
+    session.request.return_value = Mock(
+        status_code=200,
+        content=b'{"mapping_type":"salesforce"}',
+        headers={"content-type": "application/json"},
+        json=Mock(return_value={"mapping_type": "salesforce"}),
+    )
+    api = AdminSyncMappingsAPI(HTTPTransport(base_url=base_url, session=session))
+
+    api.get_mapping_type(7)
+    api.get_mapping_type(7)
+
+    assert session.request.call_count == 1
+
+
+def test_get_mapping_is_cached_for_the_run(base_url: str) -> None:
+    session = Mock()
+    session.request.return_value = Mock(
+        status_code=200,
+        content=b"[]",
+        headers={"content-type": "application/json"},
+        json=Mock(return_value=[]),
+    )
+    api = AdminSyncMappingsAPI(HTTPTransport(base_url=base_url, session=session))
+
+    api.get_mapping(13, crm_entity="Account")
+    api.get_mapping(13, crm_entity="Account")
+
+    assert session.request.call_count == 1
+
+
+def test_set_mapping_invalidates_all_cached_reads_for_sync_id(base_url: str) -> None:
+    session = Mock()
+    session.request.return_value = Mock(
+        status_code=200,
+        content=b'{"mapping_type":"salesforce"}',
+        headers={"content-type": "application/json"},
+        json=Mock(return_value={"mapping_type": "salesforce"}),
+    )
+    transport = HTTPTransport(base_url=base_url, session=session)
+    api = AdminSyncMappingsAPI(transport)
+
+    api.get_mapping_type(13)
+    session.request.return_value = Mock(
+        status_code=200,
+        content=b"[]",
+        headers={"content-type": "application/json"},
+        json=Mock(return_value=[]),
+    )
+    api.set_mapping(13, crm_entity="Account", mappings=[{"key": "Id"}])
+    session.request.return_value = Mock(
+        status_code=200,
+        content=b'{"mapping_type":"salesforce"}',
+        headers={"content-type": "application/json"},
+        json=Mock(return_value={"mapping_type": "salesforce"}),
+    )
+    api.get_mapping_type(13)
+
+    assert session.request.call_count == 3

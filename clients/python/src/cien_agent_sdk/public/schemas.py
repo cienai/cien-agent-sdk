@@ -13,8 +13,12 @@ class PublicSchemasAPI(EndpointGroup):
         return self._get(f"/api/schemas/base/{cien_entity}")
 
     def load_schema(self, *, coid: str, cien_entity: str) -> dict[str, Any] | None:
-        """Fetch the stored schema definition for one company/entity pair."""
-        return self._get(f"/api/schemas/{coid}/{cien_entity}")
+        """Fetch the stored schema definition for one company/entity pair (cached for the run)."""
+        return self._get_cached(
+            f"/api/schemas/{coid}/{cien_entity}",
+            cache_key=("schema", coid, cien_entity),
+            ttl=1200,
+        )
 
     def get_schema(self, *, coid: str, cien_entity: str, crm_type: str) -> dict[str, Any]:
         """Fetch the generated schema definition for one company/entity pair."""
@@ -25,8 +29,10 @@ class PublicSchemasAPI(EndpointGroup):
 
     def initialize_schemas(self, *, coid: str, crm_type: str | None = None) -> dict[str, Any]:
         """Generate and persist schema files for one company."""
-        return self._post(
+        result = self._post(
             f"/api/schemas/{coid}/initialize",
             params={"crm_type": crm_type} if crm_type is not None else None,
             retryable=True,
         )
+        self._invalidate_cache(("schema", coid))
+        return result

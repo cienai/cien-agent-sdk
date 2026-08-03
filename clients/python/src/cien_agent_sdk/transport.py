@@ -2,29 +2,47 @@
 
 Supports a string token or a callable token provider. Requests use a 60-second
 default timeout. GET requests retry transient request failures and transient
-HTTP statuses with default waits of 5, 10, and 30 seconds. If a request fails
-with a 401 that appears to be a token-expired error, and a token provider
-callable was provided, the transport will call the provider to obtain a
-replacement token, set it, and retry the request once. The transport also
-retries transient 401 token verification server errors, which can clear on a
-short backoff.
+HTTP statuses with default waits of 5, 10, and 30 seconds (plus up to 20%
+jitter), honoring a `Retry-After` response header when present. If a request
+fails with a 401 that appears to be a token-expired error, and a token
+provider callable was provided, the transport will call the provider to
+obtain a replacement token, set it, and retry the request once. The transport
+also retries transient 401 token verification server errors, which can clear
+on a short backoff.
+
+Every request carries a stable `X-Cien-Client-Id` header (generated once per
+transport instance unless supplied) and an `X-Cien-Run-Id` header when a
+pipeline run id is set, so AgentOS/observability tooling can attribute
+traffic. Retry counts by HTTP status are tracked on `self.stats`.
+
+A shared, job-scoped `MetadataCache` (`self.metadata_cache`) is available for
+endpoint groups to opt into caching, single-flight request coalescing, and a
+bounded concurrency gate for metadata GETs, independent of any
+data-processing concurrency the caller manages itself. See
+`EndpointGroup._get_cached` in `base.py`.
 """
 
 from __future__ import annotations
 
+import random
 import time
+import uuid
+from datetime import datetime, timezone
+from email.utils import parsedate_to_datetime
 from typing import Any, Callable, Optional, Union
 
 import requests
 
 from .errors import APIError, RequestError
 from .hydration import hydrate_json_value
+from .metadata_cache import MetadataCache, Stats
 
 
 TokenProvider = Callable[[], Optional[str]]
 RETRYABLE_METHODS = {"GET"}
 RETRYABLE_STATUS_CODES = {429, 500, 502, 503, 504}
 RETRYABLE_EXCEPTIONS = (requests.Timeout, requests.ConnectionError)
+_JITTER_FRACTION = 0.2
 
 
 class HTTPTransport:
@@ -42,6 +60,10 @@ class HTTPTransport:
         max_retries: int = 3,
         default_headers: dict[str, str] | None = None,
         session: requests.Session | None = None,
+        metadata_max_concurrency: int = 4,
+        enable_metadata_cache: bool = True,
+        client_id: str | None = None,
+        run_id: str | None = None,
     ) -> None:
         """Create a transport with shared base URL, auth token, and session settings."""
         self.base_url = base_url.rstrip("/")
@@ -51,6 +73,11 @@ class HTTPTransport:
         self.default_headers = dict(default_headers or {})
         self._token: Optional[str] = None
         self._token_provider: Optional[TokenProvider] = token_provider
+        self.client_id = client_id or uuid.uuid4().hex
+        self.run_id = run_id
+        self.enable_metadata_cache = enable_metadata_cache
+        self.stats = Stats()
+        self.metadata_cache = MetadataCache(max_concurrency=metadata_max_concurrency, stats=self.stats)
         if token:
             self.set_token(token)
 
@@ -71,6 +98,10 @@ class HTTPTransport:
         else:
             self._token_provider = None
             self._token = token
+
+    def set_run_id(self, run_id: str | None) -> None:
+        """Set or clear the pipeline run id sent with every request."""
+        self.run_id = run_id
 
     def _resolve_token(self) -> Optional[str]:
         if self._token_provider is not None:
@@ -98,6 +129,9 @@ class HTTPTransport:
 
     def _build_headers(self, token: Optional[str], headers: dict[str, str] | None) -> dict[str, str]:
         merged_headers = dict(self.default_headers)
+        merged_headers["X-Cien-Client-Id"] = self.client_id
+        if self.run_id:
+            merged_headers["X-Cien-Run-Id"] = self.run_id
         if token:
             merged_headers["Authorization"] = f"Bearer {token}"
         if headers:
@@ -109,14 +143,38 @@ class HTTPTransport:
 
     def _retry_delay_seconds(self, retry_number: int) -> float:
         if retry_number <= 1:
-            return 5.0
-        if retry_number == 2:
-            return 10.0
-        if retry_number == 3:
-            return 30.0
-        return 30.0 * (2 ** (retry_number - 3))
+            base = 5.0
+        elif retry_number == 2:
+            base = 10.0
+        elif retry_number == 3:
+            base = 30.0
+        else:
+            base = 30.0 * (2 ** (retry_number - 3))
+        return base + random.uniform(0, base * _JITTER_FRACTION)
 
-    def _sleep_before_retry(self, retry_number: int) -> None:
+    def _parse_retry_after(self, value: str | None) -> float | None:
+        """Parse a `Retry-After` header value (delta-seconds or HTTP-date) to seconds."""
+        if not value:
+            return None
+        value = value.strip()
+        try:
+            return max(0.0, float(value))
+        except ValueError:
+            pass
+        try:
+            parsed = parsedate_to_datetime(value)
+        except (TypeError, ValueError):
+            return None
+        if parsed is None:
+            return None
+        if parsed.tzinfo is None:
+            parsed = parsed.replace(tzinfo=timezone.utc)
+        return max(0.0, (parsed - datetime.now(timezone.utc)).total_seconds())
+
+    def _sleep_before_retry(self, retry_number: int, *, retry_after: float | None = None) -> None:
+        if retry_after is not None:
+            time.sleep(retry_after)
+            return
         time.sleep(self._retry_delay_seconds(retry_number))
 
     def request(
@@ -201,6 +259,7 @@ class HTTPTransport:
                     and self._is_token_verification_server_error_payload(payload)
                 ):
                     retry_count += 1
+                    self.stats.record_retry(response.status_code)
                     self._sleep_before_retry(retry_count)
                     continue
 
@@ -210,7 +269,9 @@ class HTTPTransport:
                     and retry_count < self.max_retries
                 ):
                     retry_count += 1
-                    self._sleep_before_retry(retry_count)
+                    self.stats.record_retry(response.status_code)
+                    retry_after = self._parse_retry_after(response.headers.get("Retry-After"))
+                    self._sleep_before_retry(retry_count, retry_after=retry_after)
                     continue
 
                 message = payload.get("detail") if isinstance(payload, dict) else str(payload)

@@ -19,10 +19,10 @@ class AdminSyncAPI(EndpointGroup):
         sync_type: str | None = None,
         is_active: bool | None = None,
     ) -> list[dict[str, Any]]:
-        """List sync records filtered by company id and/or sync token."""
+        """List sync records filtered by company id and/or sync token (cached briefly)."""
         if not coid and not sync_token:
             raise ValueError("Either coid or sync_token is required")
-        return self._get(
+        return self._get_cached(
             "/api/admin/sync",
             params=drop_none(
                 {
@@ -32,6 +32,8 @@ class AdminSyncAPI(EndpointGroup):
                     "_sys_isactive": is_active,
                 }
             ),
+            cache_key=("sync_list", coid, sync_token, sync_type, is_active),
+            ttl=450,
         )
 
     def get_by_sync_token(self, sync_token: str) -> dict[str, Any] | None:
@@ -44,31 +46,45 @@ class AdminSyncAPI(EndpointGroup):
             raise
 
     def get(self, sync_id: int) -> dict[str, Any]:
-        """Fetch one sync record by ID."""
-        return self._get(f"/api/admin/sync/{sync_id}")
+        """Fetch one sync record by ID (cached briefly)."""
+        return self._get_cached(
+            f"/api/admin/sync/{sync_id}",
+            cache_key=("sync", sync_id, "get"),
+            ttl=450,
+        )
 
     def create(self, payload: dict[str, Any]) -> dict[str, Any]:
         """Create a sync record from the provided payload."""
-        return self._post("/api/admin/sync", json=payload)
+        result = self._post("/api/admin/sync", json=payload)
+        self._invalidate_cache(("sync_list",))
+        return result
 
     def update(self, sync_id: int, payload: dict[str, Any]) -> dict[str, Any]:
         """Update an existing sync record."""
-        return self._patch(f"/api/admin/sync/{sync_id}", json=payload)
+        result = self._patch(f"/api/admin/sync/{sync_id}", json=payload)
+        self._invalidate_cache(("sync", sync_id))
+        self._invalidate_cache(("sync_list",))
+        return result
 
     def set_status_key(self, sync_id: int, *, key: str, value: Any | None) -> dict[str, Any]:
         """Set or clear one sync.status key and return the updated sync record."""
-        return self._patch(
+        result = self._patch(
             f"/api/admin/sync/{sync_id}/status-key",
             json={"key": key, "value": value},
         )
+        self._invalidate_cache(("sync", sync_id))
+        self._invalidate_cache(("sync_list",))
+        return result
 
     def delete(self, sync_id: int) -> None:
         """Delete a sync record by ID."""
         self._delete(f"/api/admin/sync/{sync_id}")
+        self._invalidate_cache(("sync", sync_id))
+        self._invalidate_cache(("sync_list",))
 
     def reset(self, *, sync_id: int, crm_entity: str, reset_delta: bool = True) -> ResetSyncResponse:
         """Reset sync state for one CRM entity using a sync record id."""
-        return self._post(
+        result = self._post(
             "/api/admin/sync/reset",
             json={
                 "sync_id": sync_id,
@@ -76,3 +92,6 @@ class AdminSyncAPI(EndpointGroup):
                 "reset_delta": reset_delta,
             },
         )
+        self._invalidate_cache(("sync", sync_id))
+        self._invalidate_cache(("sync_list",))
+        return result

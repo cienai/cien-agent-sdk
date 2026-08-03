@@ -111,5 +111,5 @@ class PublicUsersAPI(EndpointGroup):
         )
 
     def whoami(self) -> dict[str, Any]:
-        """Return the current authenticated user's profile."""
-        return self._get("/whoami")
+        """Return the current authenticated user's profile (cached once per session)."""
+        return self._get_cached("/whoami", cache_key=("whoami",), ttl=None)

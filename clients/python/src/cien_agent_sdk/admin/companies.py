@@ -70,10 +70,13 @@ class AdminCompaniesAPI(EndpointGroup):
         )
 
     def get(self, coid: str, *, selected_columns: list[str] | None = None) -> dict[str, Any]:
-        """Fetch one company record by COID through admin APIs."""
-        return self._get(
+        """Fetch one company record by COID through admin APIs (cached briefly)."""
+        columns_key = tuple(selected_columns) if selected_columns is not None else None
+        return self._get_cached(
             "/api/admin/companies/companies",
             params=drop_none({"coid": coid, "selected_columns": selected_columns}),
+            cache_key=("companies", coid, "get", columns_key),
+            ttl=450,
         )
 
     def lookup(
@@ -103,11 +106,15 @@ class AdminCompaniesAPI(EndpointGroup):
         selected_columns: list[str] | None = None,
     ) -> dict[str, Any]:
         """Apply partial updates to one company via admin endpoint."""
-        return self._patch(
+        result = self._patch(
             f"/api/admin/companies/{company_id}",
             json={"updates": updates, "selected_columns": selected_columns},
         )
+        self._invalidate_cache(("companies", company_id))
+        return result
 
     def delete(self, company_id: str) -> dict[str, Any]:
         """Delete one company by internal company ID via admin endpoint."""
-        return self._delete(f"/api/admin/companies/{company_id}")
+        result = self._delete(f"/api/admin/companies/{company_id}")
+        self._invalidate_cache(("companies", company_id))
+        return result
