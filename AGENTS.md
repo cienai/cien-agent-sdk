@@ -398,3 +398,11 @@ Validate important invariants at their boundary, distinguish data-quality failur
 Run targeted tests and broader established checks when feasible. Test normal and edge cases, exercise real Spark expressions, verify both sides of cross-repository contracts, and never report unrun checks as successful.
 
 Before introducing fallbacks, compatibility shims, duplicated resolvers, or special-case data paths, establish why the source-layer fix is not viable. If evidence is insufficient for a material decision, ask rather than guess. Keep durable instructions focused on recurring constraints.
+
+## Cross-Repository API Contracts
+
+- Before changing an SDK method or adding a field, identify the backend source of truth and trace the value through the SDK request, backend persistence, downstream job/orchestrator code, and response consumer.
+- Do not add SDK parameters for values that are derived from authenticated backend context, such as the triggering owner, unless the backend contract explicitly requires the client to supply them.
+- Keep semantically distinct fields distinct. In particular, `job_type`/Run Type and `processing_mode` are separate values; never make one a fallback for the other.
+- If a requested display value is stored in a separate Jobengine log record, fix the consumer/backend join rather than forcing the SDK to manufacture or duplicate that value.
+- Add contract tests for both the serialized request shape and the backend-visible result, including manual, scheduled/system, and absent-optional-field cases.
