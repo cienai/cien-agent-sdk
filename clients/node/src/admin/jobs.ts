@@ -1,11 +1,12 @@
 import { EndpointGroup } from '../base.js'
 
 export class AdminJobsAPI extends EndpointGroup {
-  run(payload: { coid: string; job_type: string; priority?: boolean }) {
+  run(payload: { coid: string; job_type: string; processing_mode?: string; priority?: boolean }) {
     return this.requestPost<Record<string, unknown>>('/api/admin/jobs/run', {
       json: {
         coid: payload.coid,
         jobType: payload.job_type,
+        ...(payload.processing_mode ? { processingMode: payload.processing_mode } : {}),
         priority: payload.priority ?? false,
       },
     })
