@@ -402,7 +402,6 @@ Before introducing fallbacks, compatibility shims, duplicated resolvers, or spec
 ## Cross-Repository API Contracts
 
 - Before changing an SDK method or adding a field, identify the backend source of truth and trace the value through the SDK request, backend persistence, downstream job/orchestrator code, and response consumer.
-- Do not add SDK parameters for values that are derived from authenticated backend context, such as the triggering owner, unless the backend contract explicitly requires the client to supply them.
-- Keep semantically distinct fields distinct. In particular, `job_type`/Run Type and `processing_mode` are separate values; never make one a fallback for the other.
+- Keep semantically distinct fields distinct and preserve the backend contract for each field.
 - If a requested display value is stored in a separate Jobengine log record, fix the consumer/backend join rather than forcing the SDK to manufacture or duplicate that value.
 - Add contract tests for both the serialized request shape and the backend-visible result, including manual, scheduled/system, and absent-optional-field cases.
