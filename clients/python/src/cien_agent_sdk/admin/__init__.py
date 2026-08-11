@@ -12,6 +12,7 @@ from .job_data import AdminJobDataAPI
 from .job_engine_logs import AdminJobEngineLogsAPI
 from .mappings import AdminMappingsAPI
 from .models_validation import AdminModelsValidationAPI
+from .runtime_model_performance import AdminRuntimeModelPerformanceAPI
 from .partners import AdminPartnersAPI
 from .powerbi import AdminPowerBIAPI
 from .sync import AdminSyncAPI
@@ -34,6 +35,7 @@ class AdminClient:
         self.job_engine_logs = AdminJobEngineLogsAPI(transport)
         self.mappings = AdminMappingsAPI(transport)
         self.models_validation = AdminModelsValidationAPI(transport)
+        self.runtime_model_performance = AdminRuntimeModelPerformanceAPI(transport)
         self.partners = AdminPartnersAPI(transport)
         self.powerbi = AdminPowerBIAPI(transport)
         self.sync = AdminSyncAPI(transport)

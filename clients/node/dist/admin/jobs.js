@@ -5,6 +5,7 @@ export class AdminJobsAPI extends EndpointGroup {
             json: {
                 coid: payload.coid,
                 jobType: payload.job_type,
+                ...(payload.processing_mode ? { processingMode: payload.processing_mode } : {}),
                 priority: payload.priority ?? false,
             },
         });
