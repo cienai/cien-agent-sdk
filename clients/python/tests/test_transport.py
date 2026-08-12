@@ -57,7 +57,12 @@ def test_request_builds_url_and_headers_with_token(base_url: str, clerk_api_toke
         json=None,
         data=None,
         files=None,
-        headers={"X-Default": "1", "Authorization": f"Bearer {clerk_api_token}", "X-Req": "2"},
+        headers={
+            "X-Default": "1",
+            "X-Cien-Client-Id": transport.client_id,
+            "Authorization": f"Bearer {clerk_api_token}",
+            "X-Req": "2",
+        },
         timeout=12.5,
     )
 
@@ -113,6 +118,7 @@ def test_request_retries_transient_401_token_verification_server_error(base_url:
     ]
     sleep_calls: list[float] = []
     monkeypatch.setattr(transport_module.time, "sleep", lambda seconds: sleep_calls.append(seconds))
+    monkeypatch.setattr(transport_module.random, "uniform", lambda a, b: 0.0)
     transport = HTTPTransport(base_url=base_url, session=session)
 
     result = transport.request("GET", "/v1/retry")
@@ -244,6 +250,7 @@ def test_get_retries_on_retryable_statuses_with_default_backoff(base_url: str, m
     ]
     sleep_calls: list[float] = []
     monkeypatch.setattr(transport_module.time, "sleep", lambda seconds: sleep_calls.append(seconds))
+    monkeypatch.setattr(transport_module.random, "uniform", lambda a, b: 0.0)
     transport = HTTPTransport(base_url=base_url, session=session)
 
     result = transport.request("GET", "/v1/retry")
@@ -267,6 +274,7 @@ def test_get_retries_on_connection_errors_with_default_backoff(base_url: str, mo
     ]
     sleep_calls: list[float] = []
     monkeypatch.setattr(transport_module.time, "sleep", lambda seconds: sleep_calls.append(seconds))
+    monkeypatch.setattr(transport_module.random, "uniform", lambda a, b: 0.0)
     transport = HTTPTransport(base_url=base_url, session=session)
 
     result = transport.request("GET", "/v1/retry")
@@ -306,6 +314,7 @@ def test_get_uses_third_default_backoff_slot_of_thirty_seconds(base_url: str, mo
     ]
     sleep_calls: list[float] = []
     monkeypatch.setattr(transport_module.time, "sleep", lambda seconds: sleep_calls.append(seconds))
+    monkeypatch.setattr(transport_module.random, "uniform", lambda a, b: 0.0)
     transport = HTTPTransport(base_url=base_url, session=session)
 
     result = transport.request("GET", "/v1/retry")
@@ -345,6 +354,7 @@ def test_get_raises_after_exhausting_retry_budget(base_url: str, monkeypatch: py
     ]
     sleep_calls: list[float] = []
     monkeypatch.setattr(transport_module.time, "sleep", lambda seconds: sleep_calls.append(seconds))
+    monkeypatch.setattr(transport_module.random, "uniform", lambda a, b: 0.0)
     transport = HTTPTransport(base_url=base_url, session=session)
 
     with pytest.raises(APIError, match="unavailable"):
@@ -391,6 +401,7 @@ def test_non_get_requests_retry_when_explicitly_marked_retryable(base_url: str, 
     ]
     sleep_calls: list[float] = []
     monkeypatch.setattr(transport_module.time, "sleep", lambda seconds: sleep_calls.append(seconds))
+    monkeypatch.setattr(transport_module.random, "uniform", lambda a, b: 0.0)
     transport = HTTPTransport(base_url=base_url, session=session)
 
     result = transport.request("POST", "/v1/retry", retryable=True)
@@ -413,6 +424,7 @@ def test_non_get_requests_retry_connection_errors_when_explicitly_marked_retryab
     ]
     sleep_calls: list[float] = []
     monkeypatch.setattr(transport_module.time, "sleep", lambda seconds: sleep_calls.append(seconds))
+    monkeypatch.setattr(transport_module.random, "uniform", lambda a, b: 0.0)
     transport = HTTPTransport(base_url=base_url, session=session)
 
     result = transport.request("POST", "/v1/retry", retryable=True)
@@ -420,3 +432,196 @@ def test_non_get_requests_retry_connection_errors_when_explicitly_marked_retryab
     assert result == {"ok": True}
     assert sleep_calls == [5.0]
     assert session.request.call_count == 2
+
+
+def test_retry_backoff_includes_bounded_jitter(base_url: str, monkeypatch: pytest.MonkeyPatch) -> None:
+    session = Mock()
+    session.request.side_effect = [
+        _response(
+            status_code=502,
+            content=b'{"detail":"bad gateway"}',
+            headers={"content-type": "application/json"},
+            json_value={"detail": "bad gateway"},
+        ),
+        _response(
+            status_code=200,
+            content=b'{"ok": true}',
+            headers={"content-type": "application/json"},
+            json_value={"ok": True},
+        ),
+    ]
+    sleep_calls: list[float] = []
+    monkeypatch.setattr(transport_module.time, "sleep", lambda seconds: sleep_calls.append(seconds))
+    transport = HTTPTransport(base_url=base_url, session=session)
+
+    transport.request("GET", "/v1/retry")
+
+    assert len(sleep_calls) == 1
+    # base delay is 5.0s with up to 20% jitter added, never subtracted.
+    assert 5.0 <= sleep_calls[0] <= 6.0
+
+
+def test_retry_after_seconds_header_overrides_computed_backoff(base_url: str, monkeypatch: pytest.MonkeyPatch) -> None:
+    session = Mock()
+    session.request.side_effect = [
+        _response(
+            status_code=429,
+            content=b'{"detail":"rate limited"}',
+            headers={"content-type": "application/json", "Retry-After": "2"},
+            json_value={"detail": "rate limited"},
+        ),
+        _response(
+            status_code=200,
+            content=b'{"ok": true}',
+            headers={"content-type": "application/json"},
+            json_value={"ok": True},
+        ),
+    ]
+    sleep_calls: list[float] = []
+    monkeypatch.setattr(transport_module.time, "sleep", lambda seconds: sleep_calls.append(seconds))
+    transport = HTTPTransport(base_url=base_url, session=session)
+
+    result = transport.request("GET", "/v1/retry")
+
+    assert result == {"ok": True}
+    assert sleep_calls == [2.0]
+
+
+def test_retry_after_http_date_header_overrides_computed_backoff(base_url: str, monkeypatch: pytest.MonkeyPatch) -> None:
+    session = Mock()
+    future = datetime.now(timezone.utc).replace(microsecond=0)
+    from datetime import timedelta
+
+    future = future + timedelta(seconds=3)
+    retry_after_value = future.strftime("%a, %d %b %Y %H:%M:%S GMT")
+    session.request.side_effect = [
+        _response(
+            status_code=503,
+            content=b'{"detail":"unavailable"}',
+            headers={"content-type": "application/json", "Retry-After": retry_after_value},
+            json_value={"detail": "unavailable"},
+        ),
+        _response(
+            status_code=200,
+            content=b'{"ok": true}',
+            headers={"content-type": "application/json"},
+            json_value={"ok": True},
+        ),
+    ]
+    sleep_calls: list[float] = []
+    monkeypatch.setattr(transport_module.time, "sleep", lambda seconds: sleep_calls.append(seconds))
+    transport = HTTPTransport(base_url=base_url, session=session)
+
+    result = transport.request("GET", "/v1/retry")
+
+    assert result == {"ok": True}
+    assert len(sleep_calls) == 1
+    assert 0.0 <= sleep_calls[0] <= 4.0
+
+
+def test_retries_are_recorded_by_status_in_stats(base_url: str, monkeypatch: pytest.MonkeyPatch) -> None:
+    session = Mock()
+    session.request.side_effect = [
+        _response(
+            status_code=429,
+            content=b'{"detail":"rate limited"}',
+            headers={"content-type": "application/json"},
+            json_value={"detail": "rate limited"},
+        ),
+        _response(
+            status_code=429,
+            content=b'{"detail":"rate limited"}',
+            headers={"content-type": "application/json"},
+            json_value={"detail": "rate limited"},
+        ),
+        _response(
+            status_code=503,
+            content=b'{"detail":"unavailable"}',
+            headers={"content-type": "application/json"},
+            json_value={"detail": "unavailable"},
+        ),
+        _response(
+            status_code=200,
+            content=b'{"ok": true}',
+            headers={"content-type": "application/json"},
+            json_value={"ok": True},
+        ),
+    ]
+    monkeypatch.setattr(transport_module.time, "sleep", lambda seconds: None)
+    transport = HTTPTransport(base_url=base_url, session=session)
+
+    transport.request("GET", "/v1/retry")
+
+    assert transport.stats.retries_by_status == {429: 2, 503: 1}
+    assert transport.stats.count_429 == 2
+
+
+def test_does_not_retry_400_401_or_404(base_url: str, monkeypatch: pytest.MonkeyPatch) -> None:
+    def _fail_on_sleep(_seconds):
+        raise AssertionError("should not sleep")
+
+    monkeypatch.setattr(transport_module.time, "sleep", _fail_on_sleep)
+    for status_code, detail in [(400, "bad request"), (401, "missing credentials"), (404, "not found")]:
+        session = Mock()
+        session.request.return_value = _response(
+            status_code=status_code,
+            content=b'{"detail":"%s"}' % detail.encode(),
+            headers={"content-type": "application/json"},
+            json_value={"detail": detail},
+        )
+        transport = HTTPTransport(base_url=base_url, session=session)
+
+        with pytest.raises(APIError) as err:
+            transport.request("GET", "/v1/retry")
+
+        assert err.value.status_code == status_code
+        assert session.request.call_count == 1
+
+
+def test_transport_emits_stable_client_id_header_by_default(base_url: str) -> None:
+    session = Mock()
+    session.request.return_value = _response(
+        status_code=200,
+        content=b'{"ok": true}',
+        headers={"content-type": "application/json"},
+        json_value={"ok": True},
+    )
+    transport = HTTPTransport(base_url=base_url, session=session)
+
+    transport.request("GET", "/v1/health")
+    first_headers = session.request.call_args.kwargs["headers"]
+    transport.request("GET", "/v1/health")
+    second_headers = session.request.call_args.kwargs["headers"]
+
+    assert first_headers["X-Cien-Client-Id"]
+    assert first_headers["X-Cien-Client-Id"] == second_headers["X-Cien-Client-Id"]
+    assert "X-Cien-Run-Id" not in first_headers
+
+
+def test_transport_includes_run_id_header_when_set(base_url: str) -> None:
+    session = Mock()
+    session.request.return_value = _response(
+        status_code=200,
+        content=b'{"ok": true}',
+        headers={"content-type": "application/json"},
+        json_value={"ok": True},
+    )
+    transport = HTTPTransport(base_url=base_url, session=session, client_id="fixed-client", run_id="run-42")
+
+    transport.request("GET", "/v1/health")
+
+    headers = session.request.call_args.kwargs["headers"]
+    assert headers["X-Cien-Client-Id"] == "fixed-client"
+    assert headers["X-Cien-Run-Id"] == "run-42"
+
+    transport.set_run_id(None)
+    transport.request("GET", "/v1/health")
+    headers = session.request.call_args.kwargs["headers"]
+    assert "X-Cien-Run-Id" not in headers
+
+
+def test_transport_exposes_metadata_cache_and_enable_flag(base_url: str) -> None:
+    transport = HTTPTransport(base_url=base_url, session=Mock(), enable_metadata_cache=False, metadata_max_concurrency=2)
+
+    assert transport.enable_metadata_cache is False
+    assert transport.metadata_cache is not None

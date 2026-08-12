@@ -29,6 +29,56 @@ def test_list_passes_expected_query_params(base_url: str) -> None:
     }
 
 
+def test_list_is_cached_for_the_run(base_url: str) -> None:
+    session = Mock()
+    session.request.return_value = Mock(
+        status_code=200,
+        content=b"[]",
+        headers={"content-type": "application/json"},
+        json=Mock(return_value=[]),
+    )
+    api = PublicConfigAPI(HTTPTransport(base_url=base_url, session=session))
+
+    api.list(coid="co-1", key="currency")
+    api.list(coid="co-1", key="currency")
+
+    assert session.request.call_count == 1
+
+
+def test_get_is_cached_for_the_run(base_url: str) -> None:
+    session = Mock()
+    session.request.return_value = Mock(
+        status_code=200,
+        content=b'{"key":"currency","value":"USD"}',
+        headers={"content-type": "application/json"},
+        json=Mock(return_value={"key": "currency", "value": "USD"}),
+    )
+    api = PublicConfigAPI(HTTPTransport(base_url=base_url, session=session))
+
+    api.get(coid="co-1", key="currency")
+    api.get(coid="co-1", key="currency")
+
+    assert session.request.call_count == 1
+
+
+def test_save_invalidates_cached_config_for_coid(base_url: str) -> None:
+    session = Mock()
+    session.request.return_value = Mock(
+        status_code=200,
+        content=b'{"key":"currency","value":"USD"}',
+        headers={"content-type": "application/json"},
+        json=Mock(return_value={"key": "currency", "value": "USD"}),
+    )
+    transport = HTTPTransport(base_url=base_url, session=session)
+    api = PublicConfigAPI(transport)
+
+    api.get(coid="co-1", key="currency")
+    api.save(coid="co-1", key="currency", config_type="string", value="EUR")
+    api.get(coid="co-1", key="currency")
+
+    assert session.request.call_count == 3
+
+
 def test_update_sends_bulk_config_payload_with_put(base_url: str) -> None:
     session = Mock()
     session.request.return_value = Mock(

@@ -16,6 +16,31 @@ class EndpointGroup:
         """Send a GET request for an endpoint path."""
         return self._transport.request("GET", path, params=params)
 
+    def _get_cached(
+        self,
+        path: str,
+        *,
+        params: dict[str, Any] | None = None,
+        cache_key: tuple,
+        ttl: float | None,
+    ) -> Any:
+        """Send a GET request, reusing a cached value within the transport's metadata cache.
+
+        Concurrent callers requesting the same `cache_key` share one in-flight
+        request (single-flight coalescing), bounded by the transport's
+        metadata concurrency limit. Set `ttl=None` for job-scoped caching with
+        no expiry (invalidated only via `_invalidate_cache`).
+        """
+        if not self._transport.enable_metadata_cache:
+            return self._get(path, params=params)
+        return self._transport.metadata_cache.get_or_load(
+            cache_key, ttl, lambda: self._get(path, params=params)
+        )
+
+    def _invalidate_cache(self, prefix: tuple) -> None:
+        """Drop all metadata cache entries whose key starts with `prefix`."""
+        self._transport.metadata_cache.invalidate_prefix(prefix)
+
     def _post(
         self,
         path: str,

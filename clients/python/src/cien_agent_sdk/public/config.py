@@ -17,8 +17,8 @@ class PublicConfigAPI(EndpointGroup):
         level: str | None = None,
         convert_dtypes: bool = False,
     ) -> list[dict[str, Any]]:
-        """List configuration entries for a company with optional filtering."""
-        return self._get(
+        """List configuration entries for a company with optional filtering (cached)."""
+        return self._get_cached(
             "/api/config",
             params=drop_none(
                 {
@@ -28,29 +28,38 @@ class PublicConfigAPI(EndpointGroup):
                     "convert_dtypes": convert_dtypes,
                 }
             ),
+            cache_key=("config", coid, "list", key, level, convert_dtypes),
+            ttl=1200,
         )
 
     def get(self, *, coid: str, key: str, convert_dtypes: bool = False) -> dict[str, Any]:
-        """Get one configuration value for a company and key."""
-        return self._get(
+        """Get one configuration value for a company and key (cached)."""
+        return self._get_cached(
             f"/api/config/{coid}/{key}",
             params={"convert_dtypes": convert_dtypes},
+            cache_key=("config", coid, "get", key, convert_dtypes),
+            ttl=1200,
         )
 
     def save(self, *, coid: str, key: str, config_type: str, value: Any = None) -> dict[str, Any]:
         """Create or replace one configuration value."""
-        return self._post(
+        result = self._post(
             f"/api/config/{coid}",
             json={"key": key, "type": config_type, "value": value},
         )
+        self._invalidate_cache(("config", coid))
+        return result
 
     def update(self, *, coid: str, config: list[dict[str, Any]]) -> list[dict[str, Any]]:
         """Merge and persist multiple configuration entries for one company."""
-        return self._put(
+        result = self._put(
             f"/api/config/{coid}",
             json={"config": config},
         )
+        self._invalidate_cache(("config", coid))
+        return result
 
     def delete(self, *, coid: str, key: str) -> None:
         """Delete a configuration value for a company and key."""
         self._delete(f"/api/config/{coid}/{key}")
+        self._invalidate_cache(("config", coid))
