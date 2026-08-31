@@ -38,6 +38,7 @@ class AdminCompaniesHistoryAPI(EndpointGroup):
                     "selected_columns": selected_columns,
                 }
             ),
+            retryable=True,
         )
 
     def update(
