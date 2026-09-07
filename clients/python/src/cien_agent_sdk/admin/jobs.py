@@ -8,13 +8,14 @@ from ..base import EndpointGroup
 class AdminJobsAPI(EndpointGroup):
     """/api/admin/jobs endpoints."""
 
-    def run(self, *, coid: str, job_type: str, priority: bool = False) -> dict[str, Any]:
+    def run(self, *, coid: str, job_type: str, processing_mode: str | None = None, priority: bool = False) -> dict[str, Any]:
         """Trigger a job for one company."""
         return self._post(
             "/api/admin/jobs/run",
             json={
                 "coid": coid,
                 "jobType": job_type,
+                **({"processingMode": processing_mode} if processing_mode is not None else {}),
                 "priority": priority,
             },
         )

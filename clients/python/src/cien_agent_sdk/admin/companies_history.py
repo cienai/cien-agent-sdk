@@ -47,10 +47,10 @@ class AdminCompaniesHistoryAPI(EndpointGroup):
         *,
         updates: dict[str, Any],
         selected_columns: list[str] | None = None,
-    ) -> dict[str, Any]:
-        """Update an existing companies_history row keyed by dag_run_id.
+    ) -> dict[str, Any] | None:
+        """Update an existing companies_history row when it exists.
 
-        Returns 404 if the row does not already exist.
+        Returns ``None`` when the row does not exist.
         """
         return self._patch(
             f"/api/admin/companies-history/{coid}/{dag_run_id}",
