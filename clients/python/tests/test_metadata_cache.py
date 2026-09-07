@@ -192,6 +192,7 @@ def test_stats_snapshot_reports_all_fields() -> None:
     assert snapshot == {
         "cache_hits": 1,
         "cache_misses": 1,
+        "cache_hit_rate": 2 / 3,
         "coalesced": 1,
         "metadata_requests_total": 1,
         "peak_concurrency": 3,
@@ -199,3 +200,42 @@ def test_stats_snapshot_reports_all_fields() -> None:
         "count_429": 2,
     }
     assert stats.count_429 == 2
+    assert stats.cache_hit_rate == 2 / 3
+
+
+def test_cached_values_are_isolated_from_caller_mutation() -> None:
+    cache = MetadataCache()
+    first = cache.get_or_load(("k",), None, lambda: {"items": ["original"]})
+    first["items"].append("changed")
+
+    second = cache.get_or_load(("k",), None, lambda: {"items": ["reloaded"]})
+
+    assert second == {"items": ["original"]}
+
+
+def test_invalidation_prevents_inflight_read_from_repopulating_cache() -> None:
+    cache = MetadataCache()
+    loader_started = threading.Event()
+    release_loader = threading.Event()
+    result = {}
+
+    def slow_loader():
+        loader_started.set()
+        release_loader.wait(timeout=5)
+        return "stale"
+
+    thread = threading.Thread(
+        target=lambda: result.setdefault("value", cache.get_or_load(("config", "co-1"), None, slow_loader))
+    )
+    thread.start()
+    assert loader_started.wait(timeout=5)
+
+    cache.invalidate_prefix(("config", "co-1"))
+    release_loader.set()
+    thread.join(timeout=5)
+
+    calls = []
+    fresh = cache.get_or_load(("config", "co-1"), None, lambda: calls.append(1) or "fresh")
+    assert result["value"] == "stale"
+    assert fresh == "fresh"
+    assert calls == [1]

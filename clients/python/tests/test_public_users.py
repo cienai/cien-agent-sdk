@@ -14,7 +14,7 @@ def test_whoami_is_cached_for_the_session(base_url: str) -> None:
         headers={"content-type": "application/json"},
         json=Mock(return_value={"email": "user@example.com"}),
     )
-    api = PublicUsersAPI(HTTPTransport(base_url=base_url, session=session))
+    api = PublicUsersAPI(HTTPTransport(base_url=base_url, session=session, enable_metadata_cache=True))
 
     first = api.whoami()
     second = api.whoami()

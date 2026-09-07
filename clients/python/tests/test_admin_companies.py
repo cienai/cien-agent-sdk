@@ -40,7 +40,7 @@ def test_get_is_cached_briefly(base_url: str) -> None:
         headers={"content-type": "application/json"},
         json=Mock(return_value={"id": "co-1"}),
     )
-    api = AdminCompaniesAPI(HTTPTransport(base_url=base_url, session=session))
+    api = AdminCompaniesAPI(HTTPTransport(base_url=base_url, session=session, enable_metadata_cache=True))
 
     api.get("co-1")
     api.get("co-1")
@@ -56,7 +56,7 @@ def test_update_invalidates_cached_company(base_url: str) -> None:
         headers={"content-type": "application/json"},
         json=Mock(return_value={"id": "co-1"}),
     )
-    transport = HTTPTransport(base_url=base_url, session=session)
+    transport = HTTPTransport(base_url=base_url, session=session, enable_metadata_cache=True)
     api = AdminCompaniesAPI(transport)
 
     api.get("co-1")

@@ -88,13 +88,15 @@ client = CienClient(
 
 ## Metadata Caching
 
-Schemas, config, CRM mappings, sync records, company lookups, and identity
-(`whoami`) are cached for the life of the `CienClient` to cut repeated
-AgentOS traffic within a pipeline run. Concurrent callers for the same key
+Metadata caching is disabled by default. A client owned by one pipeline run can
+opt in to caching schemas, config, CRM mappings, sync records, company lookups,
+and identity (`whoami`) for that run. Concurrent callers for the same key
 share one in-flight request, and metadata request concurrency is capped
 independently of any data-processing concurrency you manage yourself. See the
 top-level `README.md` "Metadata Caching" section for the full cache/TTL table,
-and `client.stats.snapshot()` for cache hit/miss and retry observability.
+and `client.stats.snapshot()` for cache hit rate, request counts, and retry
+observability. Do not opt in on a process-lifetime singleton because external
+mutations cannot invalidate its cache.
 
 ```python
 client = CienClient(

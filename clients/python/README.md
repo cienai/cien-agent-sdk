@@ -98,11 +98,13 @@ client = CienClient(
 
 ## Metadata Caching
 
-To cut repeated traffic to a small set of slow-changing AgentOS metadata
-endpoints, `CienClient` caches them for the life of the client (one client per
-pipeline run), coalesces concurrent requests for the same key into a single
-outbound call, and bounds concurrent metadata requests independently of any
-data-processing concurrency the caller manages itself.
+Metadata caching is disabled by default. For a client explicitly scoped to one
+pipeline run, set `enable_metadata_cache=True` to cache a small set of
+slow-changing AgentOS endpoints, coalesce concurrent requests for the same key,
+and bound concurrent metadata requests independently of data-processing
+concurrency. Do not enable it on a process-lifetime singleton: mutations from
+other processes or replicas cannot invalidate that client cache. Calling
+`set_token()` or `clear_metadata_cache()` clears cached metadata.
 
 | Endpoint(s) | Cache scope | TTL |
 |---|---|---|
@@ -122,7 +124,7 @@ client = CienClient(
     base_url="https://your-agent-os-host",
     token="<clerk-jwt-or-bearer-token>",
     metadata_max_concurrency=4,  # bound concurrent outbound metadata requests
-    enable_metadata_cache=True,  # set False to bypass caching entirely
+    enable_metadata_cache=True,  # explicit opt-in for this run-scoped client
     run_id="airflow-run-id",     # tags every request with X-Cien-Run-Id
 )
 
@@ -130,8 +132,9 @@ client.public.schemas.load_schema(coid="co-1", cien_entity="companies")  # netwo
 client.public.schemas.load_schema(coid="co-1", cien_entity="companies")  # cache hit
 
 print(client.stats.snapshot())
-# {"cache_hits": 1, "cache_misses": 1, "coalesced": 0, "metadata_requests_total": 1,
-#  "peak_concurrency": 1, "retries_by_status": {}, "count_429": 0}
+# {"cache_hits": 1, "cache_misses": 1, "cache_hit_rate": 0.5, "coalesced": 0,
+#  "metadata_requests_total": 1, "peak_concurrency": 1, "retries_by_status": {},
+#  "count_429": 0}
 ```
 
 Every request also carries a stable `X-Cien-Client-Id` header (auto-generated

@@ -61,6 +61,21 @@ def test_client_set_run_id_delegates_to_transport(base_url: str) -> None:
     assert client.transport.run_id == "run-2"
 
 
+def test_metadata_cache_is_opt_in_by_default(base_url: str) -> None:
+    client = CienClient(base_url=base_url)
+
+    assert client.transport.enable_metadata_cache is False
+
+
+def test_client_clear_metadata_cache_delegates_to_transport(base_url: str) -> None:
+    client = CienClient(base_url=base_url)
+    client.transport.metadata_cache.clear = Mock()
+
+    client.clear_metadata_cache()
+
+    client.transport.metadata_cache.clear.assert_called_once_with()
+
+
 def test_client_passes_metadata_options_to_transport(base_url: str) -> None:
     client = CienClient(base_url=base_url, metadata_max_concurrency=2, enable_metadata_cache=False, client_id="fixed")
 

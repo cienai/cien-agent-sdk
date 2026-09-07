@@ -14,7 +14,7 @@ def test_get_mapping_type_calls_sync_scoped_url(base_url: str) -> None:
         headers={"content-type": "application/json"},
         json=Mock(return_value={"mapping_type": "salesforce"}),
     )
-    api = AdminSyncMappingsAPI(HTTPTransport(base_url=base_url, session=session))
+    api = AdminSyncMappingsAPI(HTTPTransport(base_url=base_url, session=session, enable_metadata_cache=True))
 
     api.get_mapping_type(7)
 
@@ -30,7 +30,7 @@ def test_set_mapping_type_uses_put_payload(base_url: str) -> None:
         headers={"content-type": "application/json"},
         json=Mock(return_value={"mapping_type": "hubspot"}),
     )
-    api = AdminSyncMappingsAPI(HTTPTransport(base_url=base_url, session=session))
+    api = AdminSyncMappingsAPI(HTTPTransport(base_url=base_url, session=session, enable_metadata_cache=True))
 
     api.set_mapping_type(9, mapping_type="hubspot")
 
@@ -46,7 +46,7 @@ def test_get_cien_entity_sends_query_param(base_url: str) -> None:
         headers={"content-type": "application/json"},
         json=Mock(return_value={"cien_entity": "accounts"}),
     )
-    api = AdminSyncMappingsAPI(HTTPTransport(base_url=base_url, session=session))
+    api = AdminSyncMappingsAPI(HTTPTransport(base_url=base_url, session=session, enable_metadata_cache=True))
 
     api.get_cien_entity(10, crm_entity="Account")
 
@@ -61,7 +61,7 @@ def test_set_entity_overrides_uses_put_payload(base_url: str) -> None:
         headers={"content-type": "application/json"},
         json=Mock(return_value={"entity_overrides": {"Lead": "people"}}),
     )
-    api = AdminSyncMappingsAPI(HTTPTransport(base_url=base_url, session=session))
+    api = AdminSyncMappingsAPI(HTTPTransport(base_url=base_url, session=session, enable_metadata_cache=True))
 
     api.set_entity_overrides(11, entity_overrides={"Lead": "people"})
 
@@ -77,7 +77,7 @@ def test_get_default_mapping_sends_query_param(base_url: str) -> None:
         headers={"content-type": "application/json"},
         json=Mock(return_value={"default_mapping": []}),
     )
-    api = AdminSyncMappingsAPI(HTTPTransport(base_url=base_url, session=session))
+    api = AdminSyncMappingsAPI(HTTPTransport(base_url=base_url, session=session, enable_metadata_cache=True))
 
     api.get_default_mapping(12, crm_entity="Contact")
 
@@ -94,7 +94,7 @@ def test_set_mapping_targets_entity_url(base_url: str) -> None:
         headers={"content-type": "application/json"},
         json=Mock(return_value=[]),
     )
-    api = AdminSyncMappingsAPI(HTTPTransport(base_url=base_url, session=session))
+    api = AdminSyncMappingsAPI(HTTPTransport(base_url=base_url, session=session, enable_metadata_cache=True))
 
     api.set_mapping(13, crm_entity="Account", mappings=[{"key": "Id"}])
 
@@ -112,7 +112,7 @@ def test_get_mapping_type_is_cached_for_the_run(base_url: str) -> None:
         headers={"content-type": "application/json"},
         json=Mock(return_value={"mapping_type": "salesforce"}),
     )
-    api = AdminSyncMappingsAPI(HTTPTransport(base_url=base_url, session=session))
+    api = AdminSyncMappingsAPI(HTTPTransport(base_url=base_url, session=session, enable_metadata_cache=True))
 
     api.get_mapping_type(7)
     api.get_mapping_type(7)
@@ -128,7 +128,7 @@ def test_get_mapping_is_cached_for_the_run(base_url: str) -> None:
         headers={"content-type": "application/json"},
         json=Mock(return_value=[]),
     )
-    api = AdminSyncMappingsAPI(HTTPTransport(base_url=base_url, session=session))
+    api = AdminSyncMappingsAPI(HTTPTransport(base_url=base_url, session=session, enable_metadata_cache=True))
 
     api.get_mapping(13, crm_entity="Account")
     api.get_mapping(13, crm_entity="Account")
@@ -144,7 +144,7 @@ def test_set_mapping_invalidates_all_cached_reads_for_sync_id(base_url: str) -> 
         headers={"content-type": "application/json"},
         json=Mock(return_value={"mapping_type": "salesforce"}),
     )
-    transport = HTTPTransport(base_url=base_url, session=session)
+    transport = HTTPTransport(base_url=base_url, session=session, enable_metadata_cache=True)
     api = AdminSyncMappingsAPI(transport)
 
     api.get_mapping_type(13)

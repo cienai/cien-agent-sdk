@@ -14,7 +14,7 @@ def test_list_passes_expected_query_params(base_url: str) -> None:
         headers={"content-type": "application/json"},
         json=Mock(return_value=[]),
     )
-    api = PublicConfigAPI(HTTPTransport(base_url=base_url, session=session))
+    api = PublicConfigAPI(HTTPTransport(base_url=base_url, session=session, enable_metadata_cache=True))
 
     api.list(coid="co-1", key="currency", level="company", convert_dtypes=True)
 
@@ -37,7 +37,7 @@ def test_list_is_cached_for_the_run(base_url: str) -> None:
         headers={"content-type": "application/json"},
         json=Mock(return_value=[]),
     )
-    api = PublicConfigAPI(HTTPTransport(base_url=base_url, session=session))
+    api = PublicConfigAPI(HTTPTransport(base_url=base_url, session=session, enable_metadata_cache=True))
 
     api.list(coid="co-1", key="currency")
     api.list(coid="co-1", key="currency")
@@ -53,7 +53,7 @@ def test_get_is_cached_for_the_run(base_url: str) -> None:
         headers={"content-type": "application/json"},
         json=Mock(return_value={"key": "currency", "value": "USD"}),
     )
-    api = PublicConfigAPI(HTTPTransport(base_url=base_url, session=session))
+    api = PublicConfigAPI(HTTPTransport(base_url=base_url, session=session, enable_metadata_cache=True))
 
     api.get(coid="co-1", key="currency")
     api.get(coid="co-1", key="currency")
@@ -69,7 +69,7 @@ def test_save_invalidates_cached_config_for_coid(base_url: str) -> None:
         headers={"content-type": "application/json"},
         json=Mock(return_value={"key": "currency", "value": "USD"}),
     )
-    transport = HTTPTransport(base_url=base_url, session=session)
+    transport = HTTPTransport(base_url=base_url, session=session, enable_metadata_cache=True)
     api = PublicConfigAPI(transport)
 
     api.get(coid="co-1", key="currency")
@@ -87,7 +87,7 @@ def test_update_sends_bulk_config_payload_with_put(base_url: str) -> None:
         headers={"content-type": "application/json"},
         json=Mock(return_value=[{"key": "currency", "value": "USD"}]),
     )
-    api = PublicConfigAPI(HTTPTransport(base_url=base_url, session=session))
+    api = PublicConfigAPI(HTTPTransport(base_url=base_url, session=session, enable_metadata_cache=True))
 
     result = api.update(
         coid="co-1",

@@ -30,7 +30,7 @@ class CienClient:
         default_headers: dict[str, str] | None = None,
         session: requests.Session | None = None,
         metadata_max_concurrency: int = 4,
-        enable_metadata_cache: bool = True,
+        enable_metadata_cache: bool = False,
         client_id: str | None = None,
         run_id: str | None = None,
     ) -> None:
@@ -39,8 +39,9 @@ class CienClient:
         `metadata_max_concurrency` bounds concurrent outbound requests for
         cached metadata endpoints (schemas, config, mappings, sync records,
         company lookups, identity), independent of any data-processing
-        concurrency the caller manages. Set `enable_metadata_cache=False` to
-        bypass caching entirely. `run_id` tags every request with an
+        concurrency the caller manages. Metadata caching is opt-in because the
+        client must be scoped to one job/run; set `enable_metadata_cache=True`
+        only for such clients. `run_id` tags every request with an
         `X-Cien-Run-Id` header for pipeline correlation; `client_id` overrides
         the auto-generated stable `X-Cien-Client-Id`.
         """
@@ -67,6 +68,14 @@ class CienClient:
     def set_run_id(self, run_id: str | None) -> None:
         """Set or clear the pipeline run id sent with every request."""
         self.transport.set_run_id(run_id)
+
+    def clear_metadata_cache(self) -> None:
+        """Discard all metadata cached by this client."""
+        self.transport.metadata_cache.clear()
+
+    def close(self) -> None:
+        """Release the shared HTTP session and cached metadata."""
+        self.transport.close()
 
     @property
     def stats(self):

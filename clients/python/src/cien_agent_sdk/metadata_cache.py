@@ -9,6 +9,7 @@ the keys they affect via `EndpointGroup._invalidate_cache`.
 
 from __future__ import annotations
 
+from copy import deepcopy
 import threading
 import time
 from typing import Any, Callable
@@ -57,11 +58,23 @@ class Stats:
         with self._lock:
             return self.cache_misses
 
+    @property
+    def cache_hit_rate(self) -> float:
+        """Fraction of completed cache lookups served without an outbound request."""
+        with self._lock:
+            served_from_cache = self.cache_hits + self.coalesced
+            lookups = served_from_cache + self.cache_misses
+            return served_from_cache / lookups if lookups else 0.0
+
     def snapshot(self) -> dict[str, Any]:
         with self._lock:
             return {
                 "cache_hits": self.cache_hits,
                 "cache_misses": self.cache_misses,
+                "cache_hit_rate": (self.cache_hits + self.coalesced)
+                / (self.cache_hits + self.coalesced + self.cache_misses)
+                if self.cache_hits + self.coalesced + self.cache_misses
+                else 0.0,
                 "coalesced": self.coalesced,
                 "metadata_requests_total": self.cache_misses,
                 "peak_concurrency": self.peak_concurrency,
@@ -86,6 +99,7 @@ class MetadataCache:
         self._lock = threading.Lock()
         self._entries: dict[tuple, tuple[Any, float | None]] = {}
         self._inflight: dict[tuple, _Waiter] = {}
+        self._generation = 0
         self._semaphore = threading.BoundedSemaphore(max(1, max_concurrency))
         self._active = 0
         self.stats = stats if stats is not None else Stats()
@@ -99,7 +113,7 @@ class MetadataCache:
                 value, expires_at = cached
                 if expires_at is None or expires_at > now:
                     self.stats.record_hit()
-                    return value
+                    return deepcopy(value)
                 del self._entries[key]
 
             waiter = self._inflight.get(key)
@@ -109,13 +123,14 @@ class MetadataCache:
                 waiter = _Waiter()
                 self._inflight[key] = waiter
                 is_leader = True
+                load_generation = self._generation
 
         if not is_leader:
             self.stats.record_coalesced()
             waiter.event.wait()
             if waiter.error is not None:
                 raise waiter.error
-            return waiter.value
+            return deepcopy(waiter.value)
 
         self.stats.record_miss()
         try:
@@ -136,10 +151,11 @@ class MetadataCache:
             waiter.event.set()
             raise
 
-        waiter.value = value
+        waiter.value = deepcopy(value)
         with self._lock:
             expires_at = None if ttl is None else now + ttl
-            self._entries[key] = (value, expires_at)
+            if self._generation == load_generation:
+                self._entries[key] = (deepcopy(value), expires_at)
             del self._inflight[key]
         waiter.event.set()
         return value
@@ -148,10 +164,12 @@ class MetadataCache:
         """Drop every cached key that starts with `prefix`."""
         prefix_len = len(prefix)
         with self._lock:
+            self._generation += 1
             stale = [k for k in self._entries if k[:prefix_len] == prefix]
             for k in stale:
                 del self._entries[k]
 
     def clear(self) -> None:
         with self._lock:
+            self._generation += 1
             self._entries.clear()

@@ -14,7 +14,7 @@ def test_get_base_schema_uses_expected_path(base_url: str) -> None:
         headers={"content-type": "application/json"},
         json=Mock(return_value={"type": "struct", "fields": []}),
     )
-    api = PublicSchemasAPI(HTTPTransport(base_url=base_url, session=session))
+    api = PublicSchemasAPI(HTTPTransport(base_url=base_url, session=session, enable_metadata_cache=True))
 
     result = api.get_base_schema("companies")
 
@@ -32,7 +32,7 @@ def test_load_schema_uses_expected_path(base_url: str) -> None:
         headers={"content-type": "application/json"},
         json=Mock(return_value={"type": "struct", "fields": []}),
     )
-    api = PublicSchemasAPI(HTTPTransport(base_url=base_url, session=session))
+    api = PublicSchemasAPI(HTTPTransport(base_url=base_url, session=session, enable_metadata_cache=True))
 
     api.load_schema(coid="co-1", cien_entity="companies")
 
@@ -49,7 +49,7 @@ def test_load_schema_is_cached_for_the_run(base_url: str) -> None:
         headers={"content-type": "application/json"},
         json=Mock(return_value={"type": "struct", "fields": []}),
     )
-    api = PublicSchemasAPI(HTTPTransport(base_url=base_url, session=session))
+    api = PublicSchemasAPI(HTTPTransport(base_url=base_url, session=session, enable_metadata_cache=True))
 
     api.load_schema(coid="co-1", cien_entity="companies")
     api.load_schema(coid="co-1", cien_entity="companies")
@@ -65,7 +65,7 @@ def test_initialize_schemas_invalidates_cached_schema(base_url: str) -> None:
         headers={"content-type": "application/json"},
         json=Mock(return_value={"type": "struct", "fields": []}),
     )
-    transport = HTTPTransport(base_url=base_url, session=session)
+    transport = HTTPTransport(base_url=base_url, session=session, enable_metadata_cache=True)
     api = PublicSchemasAPI(transport)
 
     api.load_schema(coid="co-1", cien_entity="companies")
@@ -95,7 +95,7 @@ def test_get_schema_uses_expected_path(base_url: str) -> None:
         headers={"content-type": "application/json"},
         json=Mock(return_value={"type": "struct", "fields": []}),
     )
-    api = PublicSchemasAPI(HTTPTransport(base_url=base_url, session=session))
+    api = PublicSchemasAPI(HTTPTransport(base_url=base_url, session=session, enable_metadata_cache=True))
 
     api.get_schema(coid="co-1", cien_entity="companies", crm_type="salesforce")
 
@@ -113,7 +113,7 @@ def test_initialize_schemas_sends_expected_payload(base_url: str) -> None:
         headers={"content-type": "application/json"},
         json=Mock(return_value={"message": "ok"}),
     )
-    api = PublicSchemasAPI(HTTPTransport(base_url=base_url, session=session))
+    api = PublicSchemasAPI(HTTPTransport(base_url=base_url, session=session, enable_metadata_cache=True))
 
     result = api.initialize_schemas(coid="co-1", crm_type="salesforce")
 

@@ -620,6 +620,41 @@ def test_transport_includes_run_id_header_when_set(base_url: str) -> None:
     assert "X-Cien-Run-Id" not in headers
 
 
+def test_set_token_clears_cached_metadata(base_url: str) -> None:
+    transport = HTTPTransport(base_url=base_url, session=Mock(), enable_metadata_cache=True)
+    transport.metadata_cache.get_or_load(("whoami",), None, lambda: {"email": "old.com"})
+
+    transport.set_token("new-token")
+    calls = []
+    value = transport.metadata_cache.get_or_load(
+        ("whoami",), None, lambda: calls.append(1) or {"email": "new.com"}
+    )
+
+    assert value == {"email": "new.com"}
+    assert calls == [1]
+
+
+def test_token_provider_rotation_clears_cached_metadata(base_url: str) -> None:
+    tokens = iter(["old-token", "new-token"])
+    transport = HTTPTransport(
+        base_url=base_url,
+        session=Mock(),
+        token_provider=lambda: next(tokens),
+        enable_metadata_cache=True,
+    )
+    transport._resolve_token()
+    transport.metadata_cache.get_or_load(("whoami",), None, lambda: {"email": "old.com"})
+
+    assert transport._resolve_token() == "new-token"
+    calls = []
+    value = transport.metadata_cache.get_or_load(
+        ("whoami",), None, lambda: calls.append(1) or {"email": "new.com"}
+    )
+
+    assert value == {"email": "new.com"}
+    assert calls == [1]
+
+
 def test_transport_exposes_metadata_cache_and_enable_flag(base_url: str) -> None:
     transport = HTTPTransport(base_url=base_url, session=Mock(), enable_metadata_cache=False, metadata_max_concurrency=2)
 

@@ -61,7 +61,7 @@ class HTTPTransport:
         default_headers: dict[str, str] | None = None,
         session: requests.Session | None = None,
         metadata_max_concurrency: int = 4,
-        enable_metadata_cache: bool = True,
+        enable_metadata_cache: bool = False,
         client_id: str | None = None,
         run_id: str | None = None,
     ) -> None:
@@ -87,6 +87,10 @@ class HTTPTransport:
         Accepts either a string token, `None` to clear, or a callable that
         returns a token string when called.
         """
+        # Cached identity and authorization-scoped metadata must never survive
+        # a credential change. Incrementing the cache generation also prevents
+        # an in-flight request using the old token from repopulating the cache.
+        self.metadata_cache.clear()
         if callable(token):
             # treat as provider
             self._token_provider = token  # type: ignore[assignment]
@@ -103,10 +107,19 @@ class HTTPTransport:
         """Set or clear the pipeline run id sent with every request."""
         self.run_id = run_id
 
+    def close(self) -> None:
+        """Release the shared HTTP session and discard cached metadata."""
+        self.metadata_cache.clear()
+        self.session.close()
+
     def _resolve_token(self) -> Optional[str]:
         if self._token_provider is not None:
             try:
-                return self._token_provider()
+                resolved_token = self._token_provider()
+                if resolved_token != self._token:
+                    self.metadata_cache.clear()
+                    self._token = resolved_token
+                return resolved_token
             except Exception:
                 return self._token
         return self._token
