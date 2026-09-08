@@ -28,6 +28,22 @@ def test_replace_validation_data_puts_flexible_rows(base_url: str) -> None:
     assert call["json"][0]["expected_output"] == "yes"
 
 
+def test_get_validation_data_gets_rows_separately(base_url: str) -> None:
+    session = Mock()
+    session.request.return_value = Mock(
+        status_code=200,
+        content=b'[{"record_key":"row-1"}]',
+        headers={'content-type': 'application/json'},
+        json=Mock(return_value=[{"record_key": "row-1"}]),
+    )
+    api = AdminModelDefinitionsAPI(HTTPTransport(base_url=base_url, session=session))
+
+    assert api.get_validation_data("definition-1") == [{"record_key": "row-1"}]
+    call = session.request.call_args.kwargs
+    assert call["method"] == "GET"
+    assert call["url"].endswith("/api/model-definitions/definition-1/validation-data")
+
+
 def test_applicable_definitions_are_cached_until_mutation(base_url: str) -> None:
     session = Mock()
     session.request.return_value = Mock(
