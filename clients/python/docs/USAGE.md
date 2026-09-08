@@ -71,16 +71,39 @@ except RequestError as exc:
 The SDK retries `GET` requests by default when it sees transient failures.
 
 - `max_retries=3` by default
-- Retryable HTTP statuses: `429`, `502`, `503`, `504`
+- Retryable HTTP statuses: `429`, `500`, `502`, `503`, `504`
 - Retryable request failures: timeouts and connection errors
-- Backoff schedule: `5s`, `10s`, `30s`
-- Non-GET requests are not retried
+- Backoff schedule: `5s`, `10s`, `30s`, doubling thereafter, plus up to 20% jitter
+- A `Retry-After` response header overrides the computed delay
+- `400`, `401` (except transient token-verification server errors), and `404` are never retried
+- Non-GET requests are not retried unless called with `retryable=True`
 
 ```python
 client = CienClient(
     base_url="https://your-agent-os-host",
     token="<bearer-token>",
     max_retries=5,
+)
+```
+
+## Metadata Caching
+
+Metadata caching is disabled by default. A client owned by one pipeline run can
+opt in to caching schemas, config, CRM mappings, sync records, company lookups,
+and identity (`whoami`) for that run. Concurrent callers for the same key
+share one in-flight request, and metadata request concurrency is capped
+independently of any data-processing concurrency you manage yourself. See the
+top-level `README.md` "Metadata Caching" section for the full cache/TTL table,
+and `client.stats.snapshot()` for cache hit rate, request counts, and retry
+observability. Do not opt in on a process-lifetime singleton because external
+mutations cannot invalidate its cache.
+
+```python
+client = CienClient(
+    base_url="https://your-agent-os-host",
+    token="<bearer-token>",
+    metadata_max_concurrency=4,
+    enable_metadata_cache=True,
 )
 ```
 

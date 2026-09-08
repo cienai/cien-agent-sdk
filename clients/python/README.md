@@ -80,11 +80,13 @@ except RequestError as exc:
 
 `CienClient` enables GET retries by default with `max_retries=3`.
 
-- Retryable HTTP statuses: `429`, `502`, `503`, `504`
+- Retryable HTTP statuses: `429`, `500`, `502`, `503`, `504`
 - Retryable request failures: connection errors and timeouts
 - Default request timeout: `60s`
-- Delay schedule: `5s`, `10s`, `30s`
-- Non-GET methods are not retried
+- Delay schedule: `5s`, `10s`, `30s`, doubling thereafter, plus up to 20% random jitter
+- A `Retry-After` response header (delta-seconds or HTTP-date) overrides the computed delay
+- `400`, `401` (except transient token-verification server errors), and `404` are never retried
+- Non-GET methods are not retried unless the call passes `retryable=True`
 
 ```python
 client = CienClient(
@@ -93,6 +95,51 @@ client = CienClient(
     max_retries=5,
 )
 ```
+
+## Metadata Caching
+
+Metadata caching is disabled by default. For a client explicitly scoped to one
+pipeline run, set `enable_metadata_cache=True` to cache a small set of
+slow-changing AgentOS endpoints, coalesce concurrent requests for the same key,
+and bound concurrent metadata requests independently of data-processing
+concurrency. Do not enable it on a process-lifetime singleton: mutations from
+other processes or replicas cannot invalidate that client cache. Calling
+`set_token()` or `clear_metadata_cache()` clears cached metadata.
+
+| Endpoint(s) | Cache scope | TTL |
+|---|---|---|
+| `public.schemas.load_schema` | `(coid, cien_entity)` | 20 min, invalidated by `initialize_schemas` |
+| `public.config.list` / `.get` | `(coid, key, level, ...)` | 20 min, invalidated by `save`/`update`/`delete` |
+| `admin.mappings.list_crm_entities` / `.get_crm_mappings` / `.get_cien_entity` | `(coid, ...)` | run-scoped, invalidated by `save_crm_mappings` |
+| `admin.sync.list` / `.get` | `(coid/sync_id, ...)` | 7.5 min, invalidated by sync mutations |
+| `admin.sync_mappings.get_*` | `(sync_id, ...)` | run-scoped, invalidated by the matching `set_*` |
+| `admin.companies.get` | `(coid, ...)` | 7.5 min, invalidated by `update`/`delete` |
+| `public.users.whoami` | per session | run-scoped |
+
+Every other call (mutations, job logs, live query, PowerBI, etc.) is
+unaffected and always hits the network.
+
+```python
+client = CienClient(
+    base_url="https://your-agent-os-host",
+    token="<clerk-jwt-or-bearer-token>",
+    metadata_max_concurrency=4,  # bound concurrent outbound metadata requests
+    enable_metadata_cache=True,  # explicit opt-in for this run-scoped client
+    run_id="airflow-run-id",     # tags every request with X-Cien-Run-Id
+)
+
+client.public.schemas.load_schema(coid="co-1", cien_entity="companies")  # network call
+client.public.schemas.load_schema(coid="co-1", cien_entity="companies")  # cache hit
+
+print(client.stats.snapshot())
+# {"cache_hits": 1, "cache_misses": 1, "cache_hit_rate": 0.5, "coalesced": 0,
+#  "metadata_requests_total": 1, "peak_concurrency": 1, "retries_by_status": {},
+#  "count_429": 0}
+```
+
+Every request also carries a stable `X-Cien-Client-Id` header (auto-generated
+once per client, or pass `client_id=` to fix it), so AgentOS can attribute
+traffic across retries and cache hits/misses to the same client.
 
 ## Clerk API Key Helpers
 

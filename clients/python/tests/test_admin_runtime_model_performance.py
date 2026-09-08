@@ -12,5 +12,11 @@ def test_runtime_model_performance_save_posts_metrics():
 
     assert result == {"_sys_doc_id": "run-1"}
     api._transport.request.assert_called_once_with(
-        "POST", "/api/admin/runtime-model-performance", json={"model_name": "industry"}
+        "POST",
+        "/api/admin/runtime-model-performance",
+        json={"model_name": "industry"},
+        params=None,
+        data=None,
+        files=None,
+        retryable=False
     )
