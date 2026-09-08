@@ -41,6 +41,10 @@ class AdminModelDefinitionsAPI(EndpointGroup):
         """Retrieve definitions applicable to a company, ordered by scope precedence."""
         return self.list(co_id=co_id, partner_id=partner_id)
 
+    def get_validation_data(self, definition_id: str) -> list[dict[str, Any]]:
+        """Load validation rows separately from the model-definition metadata."""
+        return self._get(f"/api/model-definitions/{definition_id}/validation-data")
+
     def create(self, definition: dict[str, Any]) -> dict[str, Any]:
         result = self._post("/api/model-definitions", json=definition)
         self.clear_cache()
