@@ -12,6 +12,7 @@ license = { text = "MIT" }
 authors = [{ name = "Cien" }]
 dependencies = [
   "requests>=2.31.0",
+  "pydantic>=2.0,<3",
 ]
 
 [project.optional-dependencies]
