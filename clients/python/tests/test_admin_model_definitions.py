@@ -21,11 +21,12 @@ def test_replace_validation_data_puts_flexible_rows(base_url: str) -> None:
     session.request.return_value = Mock(status_code=200, content=b'{"rows_saved":1}', headers={'content-type': 'application/json'}, json=Mock(return_value={"rows_saved": 1}))
     api = AdminModelDefinitionsAPI(HTTPTransport(base_url=base_url, session=session))
 
-    api.replace_validation_data("definition-1", [{"input_data_1": {"text": "x"}, "expected_output": "yes"}])
+    api.replace_validation_data("definition-1", [{"input_1": "x", "expected_label": "yes"}])
 
     call = session.request.call_args.kwargs
     assert call["method"] == "PUT"
-    assert call["json"][0]["expected_output"] == "yes"
+    assert call["json"][0]["input_1"] == "x"
+    assert call["json"][0]["expected_label"] == "yes"
 
 
 def test_get_validation_data_gets_rows_separately(base_url: str) -> None:
@@ -57,5 +58,5 @@ def test_applicable_definitions_are_cached_until_mutation(base_url: str) -> None
     assert api.get_applicable(co_id="1") == api.get_applicable(co_id="1")
     assert session.request.call_count == 1
 
-    api.replace_validation_data("definition-1", [{"input_data": {"text": "x"}, "expected_output": "yes"}])
+    api.replace_validation_data("definition-1", [{"input_1": "x", "expected_label": "yes"}])
     assert session.request.call_count == 2
