@@ -11,6 +11,7 @@ from .jobs import AdminJobsAPI
 from .job_data import AdminJobDataAPI
 from .job_engine_logs import AdminJobEngineLogsAPI
 from .mappings import AdminMappingsAPI
+from .model_validation_runs import AdminModelValidationRunsAPI
 from .models_validation import AdminModelsValidationAPI
 from .runtime_model_performance import AdminRuntimeModelPerformanceAPI
 from .model_definitions import AdminModelDefinitionsAPI
@@ -36,6 +37,7 @@ class AdminClient:
         self.job_engine_logs = AdminJobEngineLogsAPI(transport)
         self.mappings = AdminMappingsAPI(transport)
         self.models_validation = AdminModelsValidationAPI(transport)
+        self.model_validation_runs = AdminModelValidationRunsAPI(transport)
         self.runtime_model_performance = AdminRuntimeModelPerformanceAPI(transport)
         self.model_definitions = AdminModelDefinitionsAPI(transport)
         self.partners = AdminPartnersAPI(transport)
