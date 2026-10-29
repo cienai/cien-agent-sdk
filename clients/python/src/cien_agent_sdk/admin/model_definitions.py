@@ -55,7 +55,10 @@ class AdminModelDefinitionsAPI(EndpointGroup):
         self.clear_cache()
         return result
 
-    def replace_validation_data(self, definition_id: str, rows: list[dict[str, Any]]) -> dict[str, int]:
-        result = self._put(f"/api/model-definitions/{definition_id}/validation-data", json=rows)
+    def replace_validation_data(self, definition_id: str, rows: list[dict[str, Any]], *,
+                                confirmed_replace: bool = False) -> dict[str, int]:
+        """Replace the whole set; emptying a system-defined set requires ``confirmed_replace``."""
+        params = {"confirmed_replace": "true"} if confirmed_replace else None
+        result = self._put(f"/api/model-definitions/{definition_id}/validation-data", json=rows, params=params)
         self.clear_cache()
         return result
