@@ -37,3 +37,18 @@ def hydrate_json_value(value: Any) -> Any:
     if isinstance(value, dict):
         return {key: hydrate_json_value(item) for key, item in value.items()}
     return value
+
+
+def dehydrate_json_value(value: Any) -> Any:
+    """Recursively convert native date/time values back into ISO strings for a JSON request body.
+
+    Inverse of :func:`hydrate_json_value`, so a value read from the API can be sent back unchanged
+    (for example ``_sys_updated_on`` as an optimistic-concurrency revision).
+    """
+    if isinstance(value, (datetime, date)):
+        return value.isoformat()
+    if isinstance(value, (list, tuple)):
+        return [dehydrate_json_value(item) for item in value]
+    if isinstance(value, dict):
+        return {key: dehydrate_json_value(item) for key, item in value.items()}
+    return value

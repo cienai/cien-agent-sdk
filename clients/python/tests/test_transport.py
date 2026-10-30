@@ -226,6 +226,29 @@ def test_request_hydrates_iso_datetime_and_date_values(base_url: str) -> None:
     assert result["nested"]["items"][1] == "plain"
 
 
+def test_request_sends_hydrated_values_back_as_iso_strings(base_url: str) -> None:
+    """Regression: a datetime read from the API (e.g. _sys_updated_on sent back as expected_updated_on)
+    made requests fail with "Object of type datetime is not JSON serializable" before anything was sent."""
+    session = Mock()
+    session.request.return_value = _response(status_code=204)
+    transport = HTTPTransport(base_url=base_url, session=session)
+    updated_on = datetime(2026, 10, 30, 10, 25, 19, 25217, tzinfo=timezone.utc)
+
+    transport.request("POST", "/v1/items", json={
+        "expected_updated_on": updated_on,
+        "rows": [{"asof": date(2026, 3, 1), "label": "same"}],
+        "pair": (updated_on, "plain"),
+    })
+
+    sent = session.request.call_args.kwargs["json"]
+    assert sent == {
+        "expected_updated_on": "2026-10-30T10:25:19.025217+00:00",
+        "rows": [{"asof": "2026-03-01", "label": "same"}],
+        "pair": ["2026-10-30T10:25:19.025217+00:00", "plain"],
+    }
+    assert transport_module.hydrate_json_value(sent)["expected_updated_on"] == updated_on  # round-trips unchanged
+
+
 def test_get_retries_on_retryable_statuses_with_default_backoff(base_url: str, monkeypatch: pytest.MonkeyPatch) -> None:
     session = Mock()
     session.request.side_effect = [
