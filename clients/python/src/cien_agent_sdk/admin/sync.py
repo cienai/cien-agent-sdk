@@ -66,16 +66,6 @@ class AdminSyncAPI(EndpointGroup):
         self._invalidate_cache(("sync_list",))
         return result
 
-    def set_status_key(self, sync_id: int, *, key: str, value: Any | None) -> dict[str, Any]:
-        """Set or clear one sync.status key and return the updated sync record."""
-        result = self._patch(
-            f"/api/admin/sync/{sync_id}/status-key",
-            json={"key": key, "value": value},
-        )
-        self._invalidate_cache(("sync", sync_id))
-        self._invalidate_cache(("sync_list",))
-        return result
-
     def delete(self, sync_id: int) -> None:
         """Delete a sync record by ID."""
         self._delete(f"/api/admin/sync/{sync_id}")
