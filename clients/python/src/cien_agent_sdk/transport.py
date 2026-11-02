@@ -34,7 +34,7 @@ from typing import Any, Callable, Optional, Union
 import requests
 
 from .errors import APIError, RequestError
-from .hydration import hydrate_json_value
+from .hydration import dehydrate_json_value, hydrate_json_value
 from .metadata_cache import MetadataCache, Stats
 
 
@@ -225,7 +225,7 @@ class HTTPTransport:
                     method=method,
                     url=url,
                     params=params,
-                    json=json,
+                    json=dehydrate_json_value(json),
                     data=data,
                     files=files,
                     headers=merged_headers,
