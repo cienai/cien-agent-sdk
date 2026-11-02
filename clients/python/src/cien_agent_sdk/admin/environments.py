@@ -73,3 +73,7 @@ class AdminEnvironmentsAPI(EndpointGroup):
     def copy_global_tables(self) -> dict[str, Any]:
         """Truncate-and-replace global postgres tables in staging from prod."""
         return self._post("/api/admin/environments/copy-global-tables", retryable=True)
+
+    def fix_up_staging_data_post_trueup(self) -> dict[str, Any]:
+        """Restore staging-only values after a production-to-staging true-up."""
+        return self._post("/api/admin/environments/fix-up-staging-data-post-trueup", retryable=True)
