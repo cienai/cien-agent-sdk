@@ -41,9 +41,9 @@ export class AdminSyncMappingsAPI extends EndpointGroup {
     getMapping(syncId, crmEntity) {
         return this.requestGet(`/api/admin/sync-mappings/${syncId}/mappings/${crmEntity}`);
     }
-    setMapping(syncId, crmEntity, mappings) {
+    setMapping(syncId, crmEntity, mappings, scope = 'co', coid, partnerId) {
         return this.requestPut(`/api/admin/sync-mappings/${syncId}/mappings/${crmEntity}`, {
-            json: { mappings },
+            json: { mappings, scope, coid, partner_id: partnerId },
         });
     }
     patchMappingItem(syncId, crmEntity, mapping) {
