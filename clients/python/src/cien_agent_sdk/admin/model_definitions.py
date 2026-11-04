@@ -45,6 +45,39 @@ class AdminModelDefinitionsAPI(EndpointGroup):
         """Load validation rows separately from the model-definition metadata."""
         return self._get(f"/api/model-definitions/{definition_id}/validation-data")
 
+    def prepare_execution(self, definition_id: str, *, co_id: str) -> dict[str, Any]:
+        """Resolve the definition's Platform Model Selector for ``co_id`` into an execution receipt.
+
+        The receipt names what ``predict`` will run: ``definition_revision``, ``service_id``,
+        ``service_revision``, ``selector``, ``vendor``, ``model_id`` and the effective ``settings``. It never
+        contains a provider credential. A missing, inactive or unauthorized selector raises ``APIError`` (409)
+        whose ``response_body["detail"]["code"]`` is ``platform_selector_required``,
+        ``platform_model_unavailable`` or ``credential_unavailable``. Never cached: the receipt pins revisions.
+        """
+        return self._transport.request("GET", f"/api/model-definitions/{definition_id}/execution",
+                                       headers={"x-cien-coid": str(co_id)})
+
+    def predict(self, definition_id: str, *, co_id: str, receipt: dict[str, Any], message: str,
+                output_schema: dict[str, Any], instructions: str = "",
+                pipeline_run_id: str | None = None) -> dict[str, Any]:
+        """Run one prompt on the service ``receipt`` (from ``prepare_execution``) pinned, server-side.
+
+        The definition prompt is applied by the server; ``instructions`` precede it. ``output_schema`` is a JSON
+        schema the provider enforces as structured output. Returns ``content`` (an object matching the schema),
+        ``metrics`` (``input_tokens``, ``output_tokens``, ``total_tokens`` …), the ``execution`` receipt,
+        ``session_id`` and ``run_id``. A definition or service changed since ``receipt`` raises ``APIError`` (409).
+        """
+        return self._transport.request("POST", f"/api/model-definitions/{definition_id}/predict",
+                                       headers={"x-cien-coid": str(co_id)}, json={
+            "definition_revision": receipt["definition_revision"],
+            "service_id": receipt["service_id"],
+            "service_revision": receipt["service_revision"],
+            "message": message,
+            "output_schema": output_schema,
+            "instructions": instructions,
+            "pipeline_run_id": pipeline_run_id,
+        })
+
     def create(self, definition: dict[str, Any]) -> dict[str, Any]:
         result = self._post("/api/model-definitions", json=definition)
         self.clear_cache()
