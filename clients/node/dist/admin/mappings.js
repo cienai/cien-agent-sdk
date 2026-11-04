@@ -11,9 +11,6 @@ export class AdminMappingsAPI extends EndpointGroup {
     getCrmMappings(coid, crmEntity) {
         return this.requestGet(`/api/admin/mappings/${coid}/${crmEntity}`);
     }
-    getExportMappings() {
-        return this.requestGet(`/api/admin/mappings/export-mappings`);
-    }
     saveCrmMappings(coid, crmEntity, mappings, scope = 'co', partnerId) {
         return this.requestPut(`/api/admin/mappings/${coid}/${crmEntity}`, {
             json: { mappings, scope, partner_id: partnerId },

@@ -3,6 +3,5 @@ export declare class AdminMappingsAPI extends EndpointGroup {
     listCrmEntities(coid: string): Promise<Record<string, string[]>>;
     getCienEntity(coid: string, crmEntity: string): Promise<Record<string, string | null>>;
     getCrmMappings(coid: string, crmEntity: string): Promise<Record<string, unknown>[]>;
-    getExportMappings(): Promise<Record<string, unknown>[]>;
     saveCrmMappings(coid: string, crmEntity: string, mappings: Array<Record<string, unknown>>, scope?: string, partnerId?: string): Promise<Record<string, unknown>[]>;
 }
