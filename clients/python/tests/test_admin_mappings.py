@@ -22,6 +22,22 @@ def test_get_crm_mappings_calls_entity_url(base_url: str) -> None:
     assert called_url.endswith("/api/admin/mappings/co-1/Account")
 
 
+def test_get_export_mappings_calls_agentos_url(base_url: str) -> None:
+    session = Mock()
+    session.request.return_value = Mock(
+        status_code=200,
+        content=b"[]",
+        headers={"content-type": "application/json"},
+        json=Mock(return_value=[]),
+    )
+    api = AdminMappingsAPI(HTTPTransport(base_url=base_url, session=session, enable_metadata_cache=True))
+
+    api.get_export_mappings()
+
+    called_url = session.request.call_args.kwargs["url"]
+    assert called_url.endswith("/api/admin/mappings/export-mappings")
+
+
 def test_save_crm_mappings_uses_put(base_url: str) -> None:
     session = Mock()
     session.request.return_value = Mock(

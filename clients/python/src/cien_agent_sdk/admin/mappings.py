@@ -33,6 +33,14 @@ class AdminMappingsAPI(EndpointGroup):
             ttl=None,
         )
 
+    def get_export_mappings(self) -> list[dict[str, Any]]:
+        """Fetch the global export mapping contract from AgentOS/Postgres."""
+        return self._get_cached(
+            "/api/admin/mappings/export-mappings",
+            cache_key=("mappings", "export"),
+            ttl=None,
+        )
+
     def save_crm_mappings(
         self,
         coid: str,
