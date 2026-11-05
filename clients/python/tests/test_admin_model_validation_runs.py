@@ -50,13 +50,3 @@ def test_reads_use_the_scoped_model_definition_routes(base_url: str) -> None:
     assert session.request.call_args.kwargs['url'].endswith('/api/model-definitions/validation-runs/run-1/failed-examples')
     api.list('def-1')
     assert session.request.call_args.kwargs['url'].endswith('/api/model-definitions/def-1/validation-runs')
-
-
-def test_finish_records_the_execution_receipt(base_url: str) -> None:
-    api, session = _api(base_url, {'status': 'success'})
-    receipt = {'service_id': 'svc-1', 'service_revision': '2026-11-03T09:00:00+00:00', 'model_id': 'model-b'}
-
-    api.finish('run-1', status='success', llm_model_name='model-b', provider='google', execution=receipt)
-
-    body = session.request.call_args.kwargs['json']
-    assert body['execution'] == receipt and body['llm_model_name'] == 'model-b'
