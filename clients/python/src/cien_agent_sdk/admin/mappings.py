@@ -33,12 +33,25 @@ class AdminMappingsAPI(EndpointGroup):
             ttl=None,
         )
 
-    def save_crm_mappings(self, coid: str, *, crm_entity: str, mappings: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    def save_crm_mappings(
+        self,
+        coid: str,
+        *,
+        crm_entity: str,
+        mappings: list[dict[str, Any]],
+        scope: str = "co",
+        partner_id: str | None = None,
+    ) -> list[dict[str, Any]]:
         """Write CRM mappings for one entity and return the merged result."""
+        payload: dict[str, Any] = {"mappings": mappings}
+        if scope != "co":
+            payload["scope"] = scope
+        if partner_id is not None:
+            payload["partner_id"] = partner_id
         result = self._transport.request(
             "PUT",
             f"/api/admin/mappings/{coid}/{crm_entity}",
-            json={"mappings": mappings},
+            json=payload,
         )
         self._invalidate_cache(("mappings", coid))
         return result

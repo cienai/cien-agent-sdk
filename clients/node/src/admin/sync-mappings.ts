@@ -62,11 +62,11 @@ export class AdminSyncMappingsAPI extends EndpointGroup {
     )
   }
 
-  setMapping(syncId: number, crmEntity: string, mappings: Array<Record<string, unknown>>) {
+  setMapping(syncId: number, crmEntity: string, mappings: Array<Record<string, unknown>>, scope = 'co', coid?: string, partnerId?: string) {
     return this.requestPut<Array<Record<string, unknown>>>(
       `/api/admin/sync-mappings/${syncId}/mappings/${crmEntity}`,
       {
-        json: { mappings },
+        json: { mappings, scope, coid, partner_id: partnerId },
       }
     )
   }

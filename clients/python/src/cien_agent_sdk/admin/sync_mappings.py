@@ -95,11 +95,21 @@ class AdminSyncMappingsAPI(EndpointGroup):
         *,
         crm_entity: str,
         mappings: list[dict[str, Any]],
+        scope: str = "co",
+        coid: str | None = None,
+        partner_id: str | None = None,
     ) -> list[dict[str, Any]]:
         """Update one saved mapping list for one CRM entity."""
+        payload: dict[str, Any] = {"mappings": mappings}
+        if scope != "co":
+            payload["scope"] = scope
+        if coid is not None:
+            payload["coid"] = coid
+        if partner_id is not None:
+            payload["partner_id"] = partner_id
         result = self._put(
             f"/api/admin/sync-mappings/{sync_id}/mappings/{crm_entity}",
-            json={"mappings": mappings},
+            json=payload,
         )
         self._invalidate_cache(("sync_mappings", sync_id))
         return result
