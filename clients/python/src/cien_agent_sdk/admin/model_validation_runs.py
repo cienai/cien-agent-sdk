@@ -22,12 +22,17 @@ class AdminModelValidationRunsAPI(EndpointGroup):
 
     def finish(self, run_id: str, *, status: str, outcomes: list[dict[str, Any]] | None = None,
                error_message: str | None = None, llm_model_name: str | None = None,
-               provider: str | None = None) -> dict[str, Any]:
-        """Record ``success`` with per-row outcomes, or ``failed`` with an error; repeating it is a no-op."""
-        return self._post(f"/api/admin/model-validation-runs/{run_id}/finish", json={
-            "status": status, "error_message": error_message, "outcomes": outcomes or [],
-            "llm_model_name": llm_model_name, "provider": provider,
-        })
+               provider: str | None = None, execution: dict[str, Any] | None = None) -> dict[str, Any]:
+        """Record ``success`` with per-row outcomes, or ``failed`` with an error; repeating it is a no-op.
+
+        ``execution`` is the Model Definition execution receipt the run scored with (service id/revision,
+        vendor, model_id, settings), from ``model_definitions.prepare_execution``.
+        """
+        payload = {"status": status, "error_message": error_message, "outcomes": outcomes or [],
+                   "llm_model_name": llm_model_name, "provider": provider}
+        if execution is not None:
+            payload["execution"] = execution
+        return self._post(f"/api/admin/model-validation-runs/{run_id}/finish", json=payload)
 
     def list(self, definition_id: str, *, page: int = 1, page_size: int = 20) -> dict[str, Any]:
         return self._get(f"/api/model-definitions/{definition_id}/validation-runs",
