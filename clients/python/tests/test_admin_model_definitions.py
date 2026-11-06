@@ -74,3 +74,74 @@ def test_replace_validation_data_sends_confirmation_only_when_requested(base_url
     call = session.request.call_args.kwargs
     assert call["method"] == "PUT" and call["json"] == []
     assert call["params"] == {"confirmed_replace": "true"}
+
+
+RECEIPT = {
+    "definition_id": "definition-1", "definition_revision": "2026-11-04T10:00:00.123456+00:00",
+    "execution_type": "llm", "service_id": "svc-1", "service_revision": "2026-11-03T09:00:00+00:00",
+    "selector": "gemini-flash-lite", "vendor": "google", "model_id": "gemini-3.5-flash-lite", "settings": {"seed": 42},
+}
+
+
+def _json_session(body):
+    session = Mock()
+    session.request.return_value = Mock(status_code=200, content=b'{}', headers={'content-type': 'application/json'},
+                                        json=Mock(return_value=body))
+    return session
+
+
+def test_prepare_execution_resolves_for_the_company_and_is_not_cached(base_url: str) -> None:
+    session = _json_session(RECEIPT)
+    api = AdminModelDefinitionsAPI(HTTPTransport(base_url=base_url, session=session))
+
+    receipt = api.prepare_execution("definition-1", co_id="42")
+    api.prepare_execution("definition-1", co_id="42")
+
+    call = session.request.call_args.kwargs
+    assert call["method"] == "GET"
+    assert call["url"].endswith("/api/model-definitions/definition-1/execution")
+    assert call["headers"]["x-cien-coid"] == "42"
+    assert session.request.call_count == 2
+    assert receipt["model_id"] == "gemini-3.5-flash-lite"
+
+
+def test_predict_posts_the_pinned_receipt_revisions(base_url: str) -> None:
+    from cien_agent_sdk.transport import hydrate_json_value
+
+    session = _json_session({"content": {"classifications": []}, "metrics": {"input_tokens": 3}})
+    api = AdminModelDefinitionsAPI(HTTPTransport(base_url=base_url, session=session))
+    # prepare_execution hands back a hydrated receipt; its revisions must go back unchanged
+    receipt = hydrate_json_value(RECEIPT)
+
+    result = api.predict("definition-1", co_id="42", receipt=receipt, message="a\n#\nb",
+                         output_schema={"type": "object"}, instructions="Batch rules", pipeline_run_id="run-9")
+
+    call = session.request.call_args.kwargs
+    assert call["method"] == "POST"
+    assert call["url"].endswith("/api/model-definitions/definition-1/predict")
+    assert call["headers"]["x-cien-coid"] == "42"
+    body = call["json"]
+    assert body["service_id"] == "svc-1"
+    assert body["definition_revision"].startswith("2026-11-04T10:00:00.123456")
+    assert body["service_revision"].startswith("2026-11-03T09:00:00")
+    assert body["message"] == "a\n#\nb" and body["instructions"] == "Batch rules"
+    assert body["pipeline_run_id"] == "run-9" and body["output_schema"] == {"type": "object"}
+    assert set(body) == {"definition_revision", "service_id", "service_revision", "message", "output_schema",
+                         "instructions", "pipeline_run_id"}
+    assert result["metrics"]["input_tokens"] == 3
+
+
+def test_selector_errors_surface_the_api_code(base_url: str) -> None:
+    import pytest
+    from cien_agent_sdk.errors import APIError
+
+    session = Mock()
+    detail = {"detail": {"code": "platform_selector_required", "message": "Choose and save a Platform selector"}}
+    session.request.return_value = Mock(status_code=409, content=b'{}', headers={'content-type': 'application/json'},
+                                        json=Mock(return_value=detail))
+    api = AdminModelDefinitionsAPI(HTTPTransport(base_url=base_url, session=session))
+
+    with pytest.raises(APIError) as exc:
+        api.prepare_execution("definition-1", co_id="42")
+    assert exc.value.status_code == 409
+    assert exc.value.response_body["detail"]["code"] == "platform_selector_required"

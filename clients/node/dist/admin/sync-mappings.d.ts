@@ -11,6 +11,6 @@ export declare class AdminSyncMappingsAPI extends EndpointGroup {
     setDefaultMapping(syncId: number): Promise<void>;
     getMappings(syncId: number): Promise<Record<string, Record<string, Record<string, unknown>[]>>>;
     getMapping(syncId: number, crmEntity: string): Promise<Record<string, unknown>[]>;
-    setMapping(syncId: number, crmEntity: string, mappings: Array<Record<string, unknown>>): Promise<Record<string, unknown>[]>;
+    setMapping(syncId: number, crmEntity: string, mappings: Array<Record<string, unknown>>, scope?: string, coid?: string, partnerId?: string): Promise<Record<string, unknown>[]>;
     patchMappingItem(syncId: number, crmEntity: string, mapping: Record<string, unknown>): Promise<Record<string, unknown>[]>;
 }
