@@ -115,6 +115,37 @@ def test_get_is_cached_briefly(base_url: str) -> None:
     assert session.request.call_count == 1
 
 
+def test_resolve_box_access_token_is_uncached(base_url: str) -> None:
+    session = Mock()
+    session.request.return_value = Mock(
+        status_code=200,
+        content=b'{"access_token":"connected-user-token"}',
+        headers={"content-type": "application/json"},
+        json=Mock(return_value={"access_token": "connected-user-token"}),
+    )
+    api = AdminSyncAPI(HTTPTransport(base_url=base_url, session=session, enable_metadata_cache=True))
+
+    assert api.resolve_box_access_token(235) == "connected-user-token"
+    assert api.resolve_box_access_token(235) == "connected-user-token"
+
+    assert session.request.call_count == 2
+    assert session.request.call_args.kwargs["url"].endswith("/api/admin/sync/235/box-access-token")
+
+
+def test_resolve_box_access_token_rejects_empty_response(base_url: str) -> None:
+    session = Mock()
+    session.request.return_value = Mock(
+        status_code=200,
+        content=b'{"access_token":""}',
+        headers={"content-type": "application/json"},
+        json=Mock(return_value={"access_token": ""}),
+    )
+    api = AdminSyncAPI(HTTPTransport(base_url=base_url, session=session, enable_metadata_cache=True))
+
+    with pytest.raises(ValueError, match="Box access token response was empty"):
+        api.resolve_box_access_token(235)
+
+
 def test_update_invalidates_cached_sync_record_and_list(base_url: str) -> None:
     session = Mock()
     session.request.return_value = Mock(

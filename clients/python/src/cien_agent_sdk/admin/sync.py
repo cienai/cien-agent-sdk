@@ -53,6 +53,18 @@ class AdminSyncAPI(EndpointGroup):
             ttl=450,
         )
 
+    def resolve_box_access_token(self, sync_id: int) -> str:
+        """Resolve a fresh token for the Box user connected to this sync.
+
+        This response is intentionally not cached because AgentOS may rotate the
+        underlying OAuth grant while resolving it.
+        """
+        result = self._post(f"/api/admin/sync/{sync_id}/box-access-token")
+        token = str(result.get("access_token") or "").strip()
+        if not token:
+            raise ValueError("Box access token response was empty")
+        return token
+
     def create(self, payload: dict[str, Any]) -> dict[str, Any]:
         """Create a sync record from the provided payload."""
         result = self._post("/api/admin/sync", json=payload)
