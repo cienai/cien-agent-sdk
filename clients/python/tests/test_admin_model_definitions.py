@@ -145,3 +145,27 @@ def test_selector_errors_surface_the_api_code(base_url: str) -> None:
         api.prepare_execution("definition-1", co_id="42")
     assert exc.value.status_code == 409
     assert exc.value.response_body["detail"]["code"] == "platform_selector_required"
+
+
+def test_prepare_execution_requests_the_credential_only_when_asked(base_url: str) -> None:
+    session = _json_session({**RECEIPT, "credential": "provider-secret"})
+    api = AdminModelDefinitionsAPI(HTTPTransport(base_url=base_url, session=session))
+    api.prepare_execution("definition-1", co_id="42")
+    assert not session.request.call_args.kwargs.get("params")
+    receipt = api.prepare_execution("definition-1", co_id="42", include_credential=True)
+    assert session.request.call_args.kwargs["params"] == {"include_credential": "true"}
+    assert receipt["credential"] == "provider-secret"
+
+
+def test_platform_service_role_resolves_for_the_company_and_is_not_cached(base_url: str) -> None:
+    from cien_agent_sdk.admin import AdminClient
+    session = _json_session({"role": "geocoding", "service_id": "google_geocoding_952", "credential": "k"})
+    admin = AdminClient(HTTPTransport(base_url=base_url, session=session))
+    receipt = admin.third_party_services.prepare_service("geocoding", co_id="42", include_credential=True)
+    admin.third_party_services.prepare_service("geocoding", co_id="42", include_credential=True)
+    call = session.request.call_args.kwargs
+    assert call["method"] == "GET"
+    assert call["url"].endswith("/api/admin/third-party-services/system/geocoding/execution")
+    assert call["headers"]["x-cien-coid"] == "42" and call["params"] == {"include_credential": "true"}
+    assert session.request.call_count == 2 and receipt["service_id"] == "google_geocoding_952"
+

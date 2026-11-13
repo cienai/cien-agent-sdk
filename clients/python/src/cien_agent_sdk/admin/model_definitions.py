@@ -45,17 +45,21 @@ class AdminModelDefinitionsAPI(EndpointGroup):
         """Load validation rows separately from the model-definition metadata."""
         return self._get(f"/api/model-definitions/{definition_id}/validation-data")
 
-    def prepare_execution(self, definition_id: str, *, co_id: str) -> dict[str, Any]:
-        """Resolve the definition's Platform Model Selector for ``co_id`` into an execution receipt.
+    def prepare_execution(self, definition_id: str, *, co_id: str, include_credential: bool = False) -> dict[str, Any]:
+        """Resolve the definition's linked third-party service for ``co_id`` into an execution receipt.
 
-        The receipt names what ``predict`` will run: ``definition_revision``, ``service_id``,
-        ``service_revision``, ``selector``, ``vendor``, ``model_id`` and the effective ``settings``. It never
-        contains a provider credential. A missing, inactive or unauthorized selector raises ``APIError`` (409)
-        whose ``response_body["detail"]["code"]`` is ``platform_selector_required``,
-        ``platform_model_unavailable`` or ``credential_unavailable``. Never cached: the receipt pins revisions.
+        The receipt names what runs: ``definition_revision``, ``service_id`` (the root service id the definition
+        links), ``service_doc_id`` (the effective scoped row), ``service_revision``, ``vendor``, ``model_id``,
+        ``auth_mode``, the effective ``settings`` and the pricing version (``billing_units``, ``pricing_source``,
+        ``pricing_verified_on``). With ``include_credential`` the receipt also carries ``credential``, released only
+        to a pipeline API key; never log or persist it. A missing, inactive or unauthorized service raises
+        ``APIError`` (409) whose ``response_body["detail"]["code"]`` is ``service_required``,
+        ``service_unavailable``, ``service_inactive``, ``service_category_mismatch`` or ``credential_unavailable``.
+        Never cached: the receipt pins revisions.
         """
         return self._transport.request("GET", f"/api/model-definitions/{definition_id}/execution",
-                                       headers={"x-cien-coid": str(co_id)})
+                                       headers={"x-cien-coid": str(co_id)},
+                                       params={"include_credential": "true"} if include_credential else None)
 
     def predict(self, definition_id: str, *, co_id: str, receipt: dict[str, Any], message: str,
                 output_schema: dict[str, Any], instructions: str = "",
