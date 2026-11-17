@@ -147,6 +147,41 @@ def test_selector_errors_surface_the_api_code(base_url: str) -> None:
     assert exc.value.response_body["detail"]["code"] == "platform_selector_required"
 
 
+def test_get_classes_reads_definition_classes_by_id(base_url: str) -> None:
+    session = _json_session([{"class_value": "Software", "class_position": 0}])
+    api = AdminModelDefinitionsAPI(HTTPTransport(base_url=base_url, session=session))
+
+    assert api.get_classes("definition-1") == [{"class_value": "Software", "class_position": 0}]
+    call = session.request.call_args.kwargs
+    assert call["method"] == "GET"
+    assert call["url"].endswith("/api/model-definitions/definition-1/classes")
+
+
+def test_class_registry_is_read_uncached_and_filtered_to_exported(base_url: str) -> None:
+    session = _json_session({"version": "v1", "groups": []})
+    api = AdminModelDefinitionsAPI(HTTPTransport(base_url=base_url, session=session))
+
+    api.get_class_registry(exported_only=True)
+    api.get_class_registry(exported_only=True)
+
+    assert session.request.call_count == 2
+    call = session.request.call_args.kwargs
+    assert call["url"].endswith("/api/model-classes")
+    assert call["params"] == {"exported_only": "true"}
+
+
+def test_sync_class_registry_puts_version_and_groups(base_url: str) -> None:
+    session = _json_session({"version": "v1", "changed": True})
+    api = AdminModelDefinitionsAPI(HTTPTransport(base_url=base_url, session=session))
+    groups = [{"class_group": "industry", "model_key": "industry", "exported": True, "classes": ["Software"]}]
+
+    assert api.sync_class_registry(version="v1", groups=groups) == {"version": "v1", "changed": True}
+    call = session.request.call_args.kwargs
+    assert call["method"] == "PUT"
+    assert call["url"].endswith("/api/model-classes")
+    assert call["json"] == {"version": "v1", "groups": groups}
+
+
 def test_prepare_execution_requests_the_credential_only_when_asked(base_url: str) -> None:
     session = _json_session({**RECEIPT, "credential": "provider-secret"})
     api = AdminModelDefinitionsAPI(HTTPTransport(base_url=base_url, session=session))
