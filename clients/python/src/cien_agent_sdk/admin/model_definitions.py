@@ -45,6 +45,30 @@ class AdminModelDefinitionsAPI(EndpointGroup):
         """Load validation rows separately from the model-definition metadata."""
         return self._get(f"/api/model-definitions/{definition_id}/validation-data")
 
+    def get_classes(self, definition_id: str) -> list[dict[str, Any]]:
+        """Active classes the definition's model can emit, in ``class_position`` order (#1164).
+
+        A partner/company override reads the classes of its global root definition.
+        """
+        return self._get(f"/api/model-definitions/{definition_id}/classes")
+
+    def get_class_registry(self, *, exported_only: bool = False) -> dict[str, Any]:
+        """The whole class registry: ``version`` and ``groups`` (``class_group``, ``model_key``,
+        ``model_definition_id``, ``exported``, ``classes`` in position order), groups alphabetical.
+
+        Never cached: callers compare ``version`` with the registry their model code declares.
+        """
+        params = {"exported_only": "true"} if exported_only else None
+        return self._get("/api/model-classes", params=params)
+
+    def sync_class_registry(self, *, version: str, groups: list[dict[str, Any]]) -> dict[str, Any]:
+        """Replace the class registry with the lists declared by model code.
+
+        Each group is ``{"class_group", "model_key" (legacy_model_name or None), "exported", "classes"}``.
+        Idempotent: replaying the stored ``version`` and content returns ``changed: False``.
+        """
+        return self._put("/api/model-classes", json={"version": version, "groups": groups})
+
     def prepare_execution(self, definition_id: str, *, co_id: str) -> dict[str, Any]:
         """Resolve the definition's Platform Model Selector for ``co_id`` into an execution receipt.
 
