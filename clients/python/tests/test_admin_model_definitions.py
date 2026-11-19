@@ -182,6 +182,19 @@ def test_sync_class_registry_puts_version_and_groups(base_url: str) -> None:
     assert call["json"] == {"version": "v1", "groups": groups}
 
 
+def test_sync_class_registry_sends_code_declared_definitions_only_when_given(base_url: str) -> None:
+    session = _json_session({"version": "v2", "changed": True})
+    api = AdminModelDefinitionsAPI(HTTPTransport(base_url=base_url, session=session))
+    groups = [{"class_group": "step_name", "model_key": "ssr_steps", "exported": True, "classes": ["Lead Gen"]},
+              {"class_group": "step_outcome", "model_key": "ssr_steps", "exported": True, "classes": ["Converted"]}]
+    definitions = [{"model_key": "ssr_steps", "display_name": "SSR Steps", "description": "SSR step rules."}]
+
+    api.sync_class_registry(version="v2", groups=groups, definitions=definitions)
+    assert session.request.call_args.kwargs["json"] == {"version": "v2", "groups": groups, "definitions": definitions}
+    api.sync_class_registry(version="v2", groups=groups, definitions=[])
+    assert session.request.call_args.kwargs["json"]["definitions"] == []
+
+
 def test_prepare_execution_requests_the_credential_only_when_asked(base_url: str) -> None:
     session = _json_session({**RECEIPT, "credential": "provider-secret"})
     api = AdminModelDefinitionsAPI(HTTPTransport(base_url=base_url, session=session))
