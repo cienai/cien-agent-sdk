@@ -45,17 +45,45 @@ class AdminModelDefinitionsAPI(EndpointGroup):
         """Load validation rows separately from the model-definition metadata."""
         return self._get(f"/api/model-definitions/{definition_id}/validation-data")
 
-    def prepare_execution(self, definition_id: str, *, co_id: str) -> dict[str, Any]:
-        """Resolve the definition's Platform Model Selector for ``co_id`` into an execution receipt.
+    def get_classes(self, definition_id: str) -> list[dict[str, Any]]:
+        """Active classes the definition's model can emit, in ``class_position`` order (#1164).
 
-        The receipt names what ``predict`` will run: ``definition_revision``, ``service_id``,
-        ``service_revision``, ``selector``, ``vendor``, ``model_id`` and the effective ``settings``. It never
-        contains a provider credential. A missing, inactive or unauthorized selector raises ``APIError`` (409)
-        whose ``response_body["detail"]["code"]`` is ``platform_selector_required``,
-        ``platform_model_unavailable`` or ``credential_unavailable``. Never cached: the receipt pins revisions.
+        A partner/company override reads the classes of its global root definition.
+        """
+        return self._get(f"/api/model-definitions/{definition_id}/classes")
+
+    def get_class_registry(self, *, exported_only: bool = False) -> dict[str, Any]:
+        """The whole class registry: ``version`` and ``groups`` (``class_group``, ``model_key``,
+        ``model_definition_id``, ``exported``, ``classes`` in position order), groups alphabetical.
+
+        Never cached: callers compare ``version`` with the registry their model code declares.
+        """
+        params = {"exported_only": "true"} if exported_only else None
+        return self._get("/api/model-classes", params=params)
+
+    def sync_class_registry(self, *, version: str, groups: list[dict[str, Any]]) -> dict[str, Any]:
+        """Replace the class registry with the lists declared by model code.
+
+        Each group is ``{"class_group", "model_key" (legacy_model_name or None), "exported", "classes"}``.
+        Idempotent: replaying the stored ``version`` and content returns ``changed: False``.
+        """
+        return self._put("/api/model-classes", json={"version": version, "groups": groups})
+
+    def prepare_execution(self, definition_id: str, *, co_id: str, include_credential: bool = False) -> dict[str, Any]:
+        """Resolve the definition's linked third-party service for ``co_id`` into an execution receipt.
+
+        The receipt names what runs: ``definition_revision``, ``service_id`` (the root service id the definition
+        links), ``service_doc_id`` (the effective scoped row), ``service_revision``, ``vendor``, ``model_id``,
+        ``auth_mode``, the effective ``settings`` and the pricing version (``billing_units``, ``pricing_source``,
+        ``pricing_verified_on``). With ``include_credential`` the receipt also carries ``credential``, released only
+        to a pipeline API key; never log or persist it. A missing, inactive or unauthorized service raises
+        ``APIError`` (409) whose ``response_body["detail"]["code"]`` is ``service_required``,
+        ``service_unavailable``, ``service_inactive``, ``service_category_mismatch`` or ``credential_unavailable``.
+        Never cached: the receipt pins revisions.
         """
         return self._transport.request("GET", f"/api/model-definitions/{definition_id}/execution",
-                                       headers={"x-cien-coid": str(co_id)})
+                                       headers={"x-cien-coid": str(co_id)},
+                                       params={"include_credential": "true"} if include_credential else None)
 
     def predict(self, definition_id: str, *, co_id: str, receipt: dict[str, Any], message: str,
                 output_schema: dict[str, Any], instructions: str = "",
