@@ -16,14 +16,14 @@ class AdminCompaniesHistoryAPI(EndpointGroup):
             params=drop_none({"selected_columns": selected_columns}),
         )
 
-    def get_for_export(self, coid: str, *, dag_run_id: str | None = None, selected_columns: list[str] | None = None) -> dict[str, Any] | None:
-        """Fetch the current run's row, or the latest row when no run is supplied.
+    def get_for_export(self, coid: str, *, selected_columns: list[str] | None = None) -> dict[str, Any] | None:
+        """Fetch the row the job export writes: the latest successful row, else the latest row.
 
         Unlike :meth:`get`, a coid with no successful run yet still gets its latest row.
         """
         return self._get(
             f"/api/admin/companies-history/{coid}/export",
-            params=drop_none({"dag_run_id": dag_run_id, "selected_columns": selected_columns}),
+            params=drop_none({"selected_columns": selected_columns}),
         )
 
     def save(
