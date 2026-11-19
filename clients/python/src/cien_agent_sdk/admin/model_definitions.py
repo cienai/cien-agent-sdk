@@ -54,28 +54,20 @@ class AdminModelDefinitionsAPI(EndpointGroup):
 
     def get_class_registry(self, *, exported_only: bool = False) -> dict[str, Any]:
         """The whole class registry: ``version`` and ``groups`` (``class_group``, ``model_key``,
-        ``model_definition_id``, ``model_definition_name``, ``exported``, ``classes`` in position order), groups
-        alphabetical.
+        ``model_definition_id``, ``exported``, ``classes`` in position order), groups alphabetical.
 
         Never cached: callers compare ``version`` with the registry their model code declares.
         """
         params = {"exported_only": "true"} if exported_only else None
         return self._get("/api/model-classes", params=params)
 
-    def sync_class_registry(self, *, version: str, groups: list[dict[str, Any]],
-                            definitions: list[dict[str, Any]] | None = None) -> dict[str, Any]:
+    def sync_class_registry(self, *, version: str, groups: list[dict[str, Any]]) -> dict[str, Any]:
         """Replace the class registry with the lists declared by model code.
 
-        Each group is ``{"class_group", "model_key" (legacy_model_name or None), "exported", "classes"}``; several
-        groups may share one ``model_key``. ``definitions`` (``{"model_key", "display_name", "description"}``)
-        are the rule-based Model Definitions model code owns: the server creates, updates or deactivates them
-        to match. Omit it to leave the stored ones untouched.
+        Each group is ``{"class_group", "model_key" (legacy_model_name or None), "exported", "classes"}``.
         Idempotent: replaying the stored ``version`` and content returns ``changed: False``.
         """
-        body: dict[str, Any] = {"version": version, "groups": groups}
-        if definitions is not None:
-            body["definitions"] = definitions
-        return self._put("/api/model-classes", json=body)
+        return self._put("/api/model-classes", json={"version": version, "groups": groups})
 
     def prepare_execution(self, definition_id: str, *, co_id: str, include_credential: bool = False) -> dict[str, Any]:
         """Resolve the definition's linked third-party service for ``co_id`` into an execution receipt.
