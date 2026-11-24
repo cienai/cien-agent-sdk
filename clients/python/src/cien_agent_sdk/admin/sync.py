@@ -54,10 +54,11 @@ class AdminSyncAPI(EndpointGroup):
         )
 
     def resolve_box_access_token(self, sync_id: int) -> str:
-        """Resolve a fresh token for the Box user connected to this sync.
+        """Resolve a Box access token for this sync's source folder.
 
-        This response is intentionally not cached because AgentOS may rotate the
-        underlying OAuth grant while resolving it.
+        AgentOS mints the token for Cien's shared Box user and verifies it can
+        read the sync's configured folder. Tokens last about an hour, so this
+        response is intentionally not cached.
         """
         result = self._post(f"/api/admin/sync/{sync_id}/box-access-token")
         token = str(result.get("access_token") or "").strip()
