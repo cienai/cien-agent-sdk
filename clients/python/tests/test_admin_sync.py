@@ -132,6 +132,23 @@ def test_resolve_box_access_token_is_uncached(base_url: str) -> None:
     assert session.request.call_args.kwargs["url"].endswith("/api/admin/sync/235/box-access-token")
 
 
+def test_resolve_box_access_token_reports_a_rejected_token(base_url: str) -> None:
+    session = Mock()
+    session.request.return_value = Mock(
+        status_code=200,
+        content=b'{"access_token":"renewed"}',
+        headers={"content-type": "application/json"},
+        json=Mock(return_value={"access_token": "renewed"}),
+    )
+    api = AdminSyncAPI(HTTPTransport(base_url=base_url, session=session, enable_metadata_cache=True))
+
+    assert api.resolve_box_access_token(235, rejected_access_token="bad") == "renewed"
+    assert session.request.call_args.kwargs["json"] == {"rejected_access_token": "bad"}
+
+    api.resolve_box_access_token(235)
+    assert session.request.call_args.kwargs.get("json") is None
+
+
 def test_resolve_box_access_token_rejects_empty_response(base_url: str) -> None:
     session = Mock()
     session.request.return_value = Mock(

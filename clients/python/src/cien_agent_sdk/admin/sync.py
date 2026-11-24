@@ -53,13 +53,20 @@ class AdminSyncAPI(EndpointGroup):
             ttl=450,
         )
 
-    def resolve_box_access_token(self, sync_id: int) -> str:
-        """Resolve a fresh token for the Box user connected to this sync.
+    def resolve_box_access_token(self, sync_id: int, *, rejected_access_token: str | None = None) -> str:
+        """Resolve a usable token for the Box user connected to this sync.
+
+        Pass ``rejected_access_token`` after Box has rejected the token this
+        method returned (or the stored one): AgentOS then renews it even if its
+        recorded lifetime says it should still be valid.
 
         This response is intentionally not cached because AgentOS may rotate the
         underlying OAuth grant while resolving it.
         """
-        result = self._post(f"/api/admin/sync/{sync_id}/box-access-token")
+        result = self._post(
+            f"/api/admin/sync/{sync_id}/box-access-token",
+            json={"rejected_access_token": rejected_access_token} if rejected_access_token else None,
+        )
         token = str(result.get("access_token") or "").strip()
         if not token:
             raise ValueError("Box access token response was empty")
