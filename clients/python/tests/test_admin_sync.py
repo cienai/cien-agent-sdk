@@ -132,6 +132,23 @@ def test_resolve_box_access_token_is_uncached(base_url: str) -> None:
     assert session.request.call_args.kwargs["url"].endswith("/api/admin/sync/235/box-access-token")
 
 
+def test_resolve_box_access_token_can_verify_a_folder_before_it_is_saved(base_url: str) -> None:
+    session = Mock()
+    session.request.return_value = Mock(
+        status_code=200,
+        content=b'{"access_token":"t"}',
+        headers={"content-type": "application/json"},
+        json=Mock(return_value={"access_token": "t"}),
+    )
+    api = AdminSyncAPI(HTTPTransport(base_url=base_url, session=session, enable_metadata_cache=True))
+
+    api.resolve_box_access_token(235, folder_id="777")
+    assert session.request.call_args.kwargs["json"] == {"folder_id": "777"}
+
+    api.resolve_box_access_token(235)
+    assert session.request.call_args.kwargs.get("json") is None
+
+
 def test_resolve_box_access_token_rejects_empty_response(base_url: str) -> None:
     session = Mock()
     session.request.return_value = Mock(
